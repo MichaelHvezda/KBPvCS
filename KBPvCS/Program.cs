@@ -18,9 +18,9 @@ namespace KBPvCS
 
         //Our new abstracted objects, here we specify what the types are.
 
-        private static Shader Shader;
+        private static SharedResProject.Shader Shader;
         private static DrawBuffer DrawBufferr;
-        private static Texture Texture;
+        private static SharedResProject.Texture Texture;
         private static Video Video;
         private static RenderTarget RenderTarget;
 
@@ -51,10 +51,10 @@ namespace KBPvCS
             Gl = GL.GetApi(window);
 
             //Instantiating our new abstractions
-            DrawBufferr = new DrawBuffer(Gl);
-            Shader = new Shader(Gl, "kmean");
-            Texture = new Texture(Gl, ResourcesProvider.Big);
-            Video = new Video(Gl, ResourcesProvider.Video1);
+            DrawBufferr = new(Gl);
+            Shader = new(Gl, "kmean");
+            Texture = new(Gl, ResourcesProvider.Big);
+            Video = new(Gl, ResourcesProvider.Video1);
             //RenderTarget = new RenderTarget(Gl, Video.Texture.Height, Video.Texture.Width, 1);
             Console.WriteLine("res loaded");
         }

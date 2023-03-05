@@ -1,5 +1,4 @@
 ﻿using HeyRed.ImageSharp.AVCodecFormats;
-using HeyRed.ImageSharp.AVCodecFormats.Mp4;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Metadata;
 using System;
@@ -14,7 +13,7 @@ namespace SharedResProject
     {
         public static Configuration GetConfiguration()
         {
-            return new Configuration(new Mp4ConfigurationModule());
+            return new Configuration(new HeyRed.ImageSharp.AVCodecFormats.Mp4.Mp4ConfigurationModule());
         }
     }
 }

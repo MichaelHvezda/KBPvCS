@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.Metadata;
 
 namespace HeyRed.ImageSharp.AVCodecFormats
 {
-    public class ImageInfo : IImageInfo
+    public class ImageInfo : SixLabors.ImageSharp.IImageInfo
     {
         public ImageInfo(int width, int height)
         {

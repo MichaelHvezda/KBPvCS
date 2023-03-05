@@ -9,12 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="MP4Codec\**" />
-    <EmbeddedResource Remove="MP4Codec\**" />
-    <None Remove="MP4Codec\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="ImageSharp.AVCodecFormats" Version="3.0.8" />
     <PackageReference Include="ImageSharp.AVCodecFormats.Native.win-x64" Version="1.6.0" />
     <PackageReference Include="Silk.NET" Version="2.16.0" />

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>library</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -9,20 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="MP4Codec\**" />
-    <EmbeddedResource Remove="MP4Codec\**" />
-    <None Remove="MP4Codec\**" />
+    <None Include="ImageSharp.AVCodecFormats\ImageSharp.AVCodecFormats.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ImageSharp.AVCodecFormats" Version="3.0.8" />
     <PackageReference Include="ImageSharp.AVCodecFormats.Native.win-x64" Version="1.6.0" />
     <PackageReference Include="Silk.NET" Version="2.16.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
   </ItemGroup>
 
 </Project>

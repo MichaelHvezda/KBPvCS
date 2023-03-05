@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBPvCS", "KBPvCS\KBPvCS.csproj", "{BB6AA62A-17BC-4927-B7C9-796E5A1FFD9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KBPvCS", "KBPvCS\KBPvCS.csproj", "{BB6AA62A-17BC-4927-B7C9-796E5A1FFD9A}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedResProject", "SharedResProject\SharedResProject.shproj", "{199A0948-07C4-41C9-84A7-2AAD7A7ECD15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,5 +23,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2EC5450F-3773-4A54-B47F-D356514B750B}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SharedResProject\SharedResProject.projitems*{199a0948-07c4-41c9-84a7-2aad7a7ecd15}*SharedItemsImports = 13
+		SharedResProject\SharedResProject.projitems*{bb6aa62a-17bc-4927-b7c9-796e5a1ffd9a}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

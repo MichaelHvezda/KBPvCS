@@ -44,7 +44,8 @@ namespace KBPvCS
         {
             gl = _gl;
 
-            var staticPath = "C:\\Users\\Hvězdič\\source\\repos\\KBPvCS\\KBPvCS\\shaders\\";
+            //var staticPath = "C:\\Users\\Hvězdič\\source\\repos\\KBPvCS\\KBPvCS\\shaders\\";
+            var staticPath = Path.GetFullPath("../../../shaders/");
             var vertexPath = Path.Combine(staticPath, shaderName + ".vert");
             var fragmentPath = Path.Combine(staticPath, shaderName + ".frag");
 

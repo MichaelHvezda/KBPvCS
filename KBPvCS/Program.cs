@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using SharedResProject;
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
@@ -52,8 +53,8 @@ namespace KBPvCS
             //Instantiating our new abstractions
             DrawBufferr = new DrawBuffer(Gl);
             Shader = new Shader(Gl, "kmean");
-            Texture = new Texture(Gl, "C:\\Users\\Hvězdič\\source\\repos\\KBPvCS\\KBPvCS\\resources\\big.jpg");
-            Video = new Video(Gl, "C:\\Users\\Hvězdič\\source\\repos\\KBPvCS\\KBPvCS\\resources\\video2.mp4");
+            Texture = new Texture(Gl, ResourcesProvider.Big);
+            Video = new Video(Gl, ResourcesProvider.Video1);
             //RenderTarget = new RenderTarget(Gl, Video.Texture.Height, Video.Texture.Width, 1);
             Console.WriteLine("res loaded");
         }
@@ -70,7 +71,7 @@ namespace KBPvCS
             Texture.Bind(TextureUnit.Texture1);
             Shader.SetUniform("uTexture1", 1);
 
-            Video.RenderTarget.ColorBuffers[1].Bind(TextureUnit.Texture2);
+            Video.RenderTarget.ColorBuffers[2].Bind(TextureUnit.Texture2);
             Shader.SetUniform("uTexture2", 2);
 
             //Gl.DrawElements(PrimitiveType.Triangles, (uint)Indices.Length, DrawElementsType.UnsignedInt, null);

@@ -158,6 +158,7 @@ namespace KBPvCS
             fixed (void* d = &data[0])
             {
                 //Setting the data of a texture.
+                //this.gl.TexImage2D(TextureTarget.Texture2D, 0, (int)InternalFormat.Rgba16f, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, d);
                 this.gl.TexImage2D(TextureTarget.Texture2D, 0, (int)InternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, d);
             }
             SetParameters();
@@ -183,7 +184,7 @@ namespace KBPvCS
             var pixel = new float[4];
             fixed (void* p = &pixel[0])
             {
-                gl.GetTexImage(TextureTarget.Texture2D, totalMipmapLevels - 1, GLEnum.Rgba, GLEnum.Float, p);
+                gl.GetTexImage(TextureTarget.Texture2D, totalMipmapLevels - 1, PixelFormat.Rgba, PixelType.Float, p);
                 avgColor = new Vector4D<float>() { X = pixel[0], Y = pixel[1], Z = pixel[2], W = pixel[3] };
                 //float valFloat = pixel[0];
                 //uint val = *((uint*)&valFloat);

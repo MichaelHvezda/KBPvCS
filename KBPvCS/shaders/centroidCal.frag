@@ -100,7 +100,8 @@ void main()
 	if (jedna == smal) {
 		color0 = vec4(a.x, a.y, a.z, 1);
 
-		//color0 = vec4(1, 0, 1, 0);
+		//color0 = vec4(-a.x, -a.y, -a.z, 1);
+		//color0 = vec4(-1, 0, -1, 1);
 	}
 	else {
 		//color0 = vec4(1, 0, 1, 0);

@@ -10,15 +10,16 @@ using System.Reflection.Metadata;
 using SixLabors.ImageSharp.Formats;
 using Silk.NET.Maths;
 using SixLabors.ImageSharp.Processing;
+using SharedResProject;
 
-namespace SharedResProject
+namespace KBPvCS
 {
     public class Video
     {
         private GL gl;
         private readonly string path;
         private Image<Rgba32> video;
-        private static Shader ShaderCentrloids;
+        private static SharedResProject.Shader ShaderCentrloids;
         private static DrawBuffer DrawBuffer;
         public static RenderTarget RenderTarget;
 
@@ -33,7 +34,7 @@ namespace SharedResProject
             this.gl = gl;
             this.path = path;
 
-            ShaderCentrloids = new Shader(gl, "centroidCal");
+            ShaderCentrloids = new SharedResProject.Shader(gl, "centroidCal");
             DrawBuffer = new DrawBuffer(gl);
 
             video = Image.Load<Rgba32>(VideoConfiguration.GetConfiguration(), path);

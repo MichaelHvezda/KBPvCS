@@ -9,7 +9,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
 
-namespace KBPvCS
+namespace KBPUvCS
 {
     class Program
     {

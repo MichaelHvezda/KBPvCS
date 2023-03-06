@@ -27,6 +27,7 @@ namespace PPBvCS
             options.Title = "LearnOpenGL with Silk.NET";
             window = Silk.NET.Windowing.Window.Create(options);
             window.Load += OnLoad;
+            window.Closing += OnClose;
 
             window.Run();
         }
@@ -46,20 +47,26 @@ namespace PPBvCS
                 for (int h = 0; h < height; h++)
                 {
                     var col = image[w, h];
-                    sum += new Vector3D<float>() { X = col.R,Y = col.G,Z = col.B };
+                    sum += new Vector3D<float>() { X = col.R, Y = col.G, Z = col.B };
                 }
             }
             var avarage = sum / (width * height);
 
             Console.WriteLine("avarage         " + avarage);
-            Console.WriteLine("avarage         " + avarage/255);
+            Console.WriteLine("avarage         " + avarage / 255);
             Console.WriteLine("texture avarage " + Texture.avgColor);
 
             Console.ReadLine();
             image.Dispose();
+            window.Close();
+        }
 
+        private static void OnClose()
+        {
+            //Remember to dispose all the instances.
+            Gl.Dispose();
             Texture.Dispose();
-            window.Dispose();
+            //RenderTarget.Dispose();
         }
     }
 }

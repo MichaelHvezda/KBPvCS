@@ -5,9 +5,14 @@ VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KBPvCS", "KBPvCS\KBPvCS.csproj", "{BB6AA62A-17BC-4927-B7C9-796E5A1FFD9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PPBvCS", "PPBvCS\PPBvCS.csproj", "{F9B6EE23-10CB-4D9A-8ED9-E459132FD993}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PPBvCS", "PPBvCS\PPBvCS.csproj", "{F9B6EE23-10CB-4D9A-8ED9-E459132FD993}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedProject", "SharedProject\SharedProject.csproj", "{B408B73A-09E1-4ED4-8D1F-1B17D90021AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedProject", "SharedProject\SharedProject.csproj", "{B408B73A-09E1-4ED4-8D1F-1B17D90021AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBPUvCS", "KBPUvCS\KBPUvCS.csproj", "{FC760286-89DB-47E7-A15A-8880C20DFA11}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B408B73A-09E1-4ED4-8D1F-1B17D90021AB} = {B408B73A-09E1-4ED4-8D1F-1B17D90021AB}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +32,10 @@ Global
 		{B408B73A-09E1-4ED4-8D1F-1B17D90021AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B408B73A-09E1-4ED4-8D1F-1B17D90021AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B408B73A-09E1-4ED4-8D1F-1B17D90021AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC760286-89DB-47E7-A15A-8880C20DFA11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC760286-89DB-47E7-A15A-8880C20DFA11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC760286-89DB-47E7-A15A-8880C20DFA11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC760286-89DB-47E7-A15A-8880C20DFA11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

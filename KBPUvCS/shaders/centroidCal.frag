@@ -18,7 +18,7 @@ float NaDruhou(float firstNumber, float scndNumber) {
 	return ((firstNumber - scndNumber) * (firstNumber - scndNumber));
 }
 
-float Vzdalenost(vec3 col, vec3 cent) {
+vec2 Vzdalenost(vec3 col, vec3 cent) {
 	float pomZaporna;
 	float pomKladna = NaDruhou(col.x, cent.x) + NaDruhou(col.y, cent.y) + NaDruhou(col.z, cent.z);
 	if (col.x < cent.x) {
@@ -29,10 +29,10 @@ float Vzdalenost(vec3 col, vec3 cent) {
 	}
 
 	if (pomKladna <= pomZaporna) {
-		return pomKladna;
+		return vec2(pomKladna, 1);
 	}
 	else {
-		return pomZaporna;
+		return vec2(pomZaporna, -1);
 	}
 }
 
@@ -80,25 +80,42 @@ vec3 RgbToHsb(vec3 a)
 	return vec3(h, s, maxn);
 }
 
+vec3 ToShaderRange(vec3 a)
+{
+	//h - 0/360
+	//s - 0/1
+	//maxn - 0/1
+	return vec3( mod(a.x+1.0f, 1.0f )* 360.0f, a.y, a.z);
+}
+
+vec4 ToTextureRange(vec3 a,float b)
+{
+	//h - -1/1
+	//s - 0/1
+	//maxn - 0/1
+	return vec4((mod(a.x + (360.0f * b),360.0f) )/ 360.0f, a.y, a.z,1);
+}
+
 void main()
 {
 
     vec4 a = texture(uTexture0, TexCoord);
 	vec3 hsb = RgbToHsb(a.xyz);
 
-	vec3 cent1hsb = RgbToHsb(cent1);
-	vec3 cent2hsb = RgbToHsb(cent2);
-	vec3 cent3hsb = RgbToHsb(cent3);
+	vec3 cent1hsb = ToShaderRange(cent1);
+	vec3 cent2hsb = ToShaderRange(cent2);
+	vec3 cent3hsb = ToShaderRange(cent3);
 
-	float jedna = Vzdalenost(hsb, cent1hsb);
-	float dva = Vzdalenost(hsb, cent2hsb);
-	float tri = Vzdalenost(hsb, cent3hsb);
+	vec2 jedna = Vzdalenost(hsb, cent1hsb);
+	vec2 dva = Vzdalenost(hsb, cent2hsb);
+	vec2 tri = Vzdalenost(hsb, cent3hsb);
 
 
-	float smal = min(min(jedna, dva), tri);
+	float smal = min(min(jedna.x, dva.x), tri.x);
 
-	if (jedna == smal) {
-		color0 = vec4(a.x, a.y, a.z, 1);
+	if (jedna.x == smal) {
+		color0 = ToTextureRange(hsb,jedna.y);
+		//color0 = vec4(a.x, a.y, a.z, 1);
 
 		//color0 = vec4(-a.x, -a.y, -a.z, 1);
 		//color0 = vec4(-1, 0, -1, 1);
@@ -109,8 +126,9 @@ void main()
 		color0 = vec4(0, 0, 0, 0);
 	}
 
-	if (dva == smal) {
-		color1 = vec4(a.x, a.y, a.z, 1);
+	if (dva.x == smal) {
+		color1 = ToTextureRange(hsb,dva.y);
+		//color1 = vec4(a.x, a.y, a.z, 1);
 		//color1 = vec4(1, 0, 1, 0);
 	}
 	else {
@@ -119,8 +137,9 @@ void main()
 		color1 = vec4(0, 0, 0, 0);
 	}
 
-	if (tri == smal) {
-		color2 = vec4(a.x, a.y, a.z, 1);
+	if (tri.x == smal) {
+		color2 = ToTextureRange(hsb,tri.y);
+		//color2 = vec4(a.x, a.y, a.z, 1);
 		//color2 = vec4(1, 0, 1, 0);
 	}
 	else {

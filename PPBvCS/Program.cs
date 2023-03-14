@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using SharedProject.Base;
 using SharedResProject;
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -19,7 +20,7 @@ namespace PPBvCS
 
         //Our new abstracted objects, here we specify what the types are.
 
-        private static SharedResProject.Texture Texture;
+        private static BaseTexture Texture;
         private static void Main(string[] args)
         {
             var options = WindowOptions.Default;
@@ -54,7 +55,7 @@ namespace PPBvCS
 
             Console.WriteLine("avarage         " + avarage);
             Console.WriteLine("avarage         " + avarage / 255);
-            Console.WriteLine("texture avarage " + Texture.avgColor);
+            Console.WriteLine("texture avarage " + Texture.AvgColor);
 
             Console.ReadLine();
             image.Dispose();

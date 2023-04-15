@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using SharedProject.Base;
+using SharedProject.Interface;
 using SharedResProject;
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -20,7 +21,11 @@ namespace PPBvCS
 
         //Our new abstracted objects, here we specify what the types are.
 
-        private static BaseTexture Texture;
+        private static ITexture Texture;
+        private static ITexture Texture1;
+        private static ITexture Texture2;
+        private static ITexture Texture3;
+        private static ITexture Texture4;
         private static void Main(string[] args)
         {
             var options = WindowOptions.Default;
@@ -36,9 +41,13 @@ namespace PPBvCS
         private static unsafe void OnLoad()
         {
             Gl = GL.GetApi(window);
-            Texture = new (Gl, ResourcesProvider.Big);
+            Texture = new BaseTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba8);
+            Texture1 = new BaseTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16);
+            Texture2 = new BaseTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16f);
+            Texture3 = new BaseTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba32f);
+            Texture4 = new BaseTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba4);
 
-            var image = Image.Load<Rgba32>(ResourcesProvider.Big);
+            using var image = Image.Load<Rgba32>(ResourcesProvider.Big);
 
             var width = image.Width;
             var height = image.Height;
@@ -56,9 +65,12 @@ namespace PPBvCS
             Console.WriteLine("avarage         " + avarage);
             Console.WriteLine("avarage         " + avarage / 255);
             Console.WriteLine("texture avarage " + Texture.AvgColor);
+            Console.WriteLine("texture avarage " + Texture1.AvgColor);
+            Console.WriteLine("texture avarage " + Texture2.AvgColor);
+            Console.WriteLine("texture avarage " + Texture3.AvgColor);
+            Console.WriteLine("texture avarage " + Texture4.AvgColor);
 
             Console.ReadLine();
-            image.Dispose();
             window.Close();
         }
 

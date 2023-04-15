@@ -1,4 +1,6 @@
-﻿using Silk.NET.OpenGL;
+﻿using SharedProject.Base;
+using SharedProject.Interface.Atomic;
+using Silk.NET.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,40 +9,40 @@ using System.Threading.Tasks;
 
 namespace SharedResProject
 {
-    public class BufferObject<TDataType> : IDisposable
+    public class BufferObject<TDataType> : BaseGLClass, IHandlerAble, IDisposable
         where TDataType : unmanaged
     {
         //Our Handle, buffertype and the GL instance this class will use, these are private because they have no reason to be public.
         //Most of the time you would want to abstract items to make things like this invisible.
-        private uint _handle;
-        private BufferTargetARB _bufferType;
-        private GL _gl;
+        public uint Handle { get; set; }
+        private readonly BufferTargetARB bufferType;
 
-        public unsafe BufferObject(GL gl, Span<TDataType> data, BufferTargetARB bufferType)
+        public unsafe BufferObject(GL gl, Span<TDataType> data, BufferTargetARB buf) : base(gl)
         {
             //Setting the gl instance and storing our buffer type.
-            _gl = gl;
-            _bufferType = bufferType;
+            bufferType = buf;
 
             //Getting the Handle, and then uploading the data to said Handle.
-            _handle = _gl.GenBuffer();
+            Handle = Gl.GenBuffer();
             Bind();
             fixed (void* d = data)
             {
-                _gl.BufferData(bufferType, (nuint)(data.Length * sizeof(TDataType)), d, BufferUsageARB.StaticDraw);
+                Gl.BufferData(bufferType, (nuint)(data.Length * sizeof(TDataType)), d, BufferUsageARB.StaticDraw);
             }
         }
 
         public void Bind()
         {
             //Binding the buffer object, with the correct buffer type.
-            _gl.BindBuffer(_bufferType, _handle);
+            Gl.BindBuffer(bufferType, Handle);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             //Remember to delete our buffer.
-            _gl.DeleteBuffer(_handle);
+            Gl.DeleteBuffer(Handle);
+
+            base.Dispose();
         }
     }
 }

@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace SharedProject.Base
 {
-    public class BaseRenderTarget<TTexture> : BaseGLClass, IRenderTarget<BaseRenderTarget<TTexture>>
-        where TTexture : BaseGLClass, ITexture<TTexture>
+    public class BaseRenderTarget<TTexture> : BaseGLClass, IRenderTarget
+        where TTexture : BaseGLClass, ITexture
     {
         public uint Handle { get; set; }
         public uint Height { get; set; }
         public uint Width { get; set; }
         public uint Count { get; set; }
-        public TTexture[] ColorBuffers { get; set; } = Array.Empty<TTexture>();
+        public ITexture[] ColorBuffers { get; set; } = Array.Empty<TTexture>();
         public GLEnum[] DrawBuffers { get; set; } = Array.Empty<GLEnum>();
 
-        public unsafe BaseRenderTarget(GL gl, uint Height, uint Width, uint Count,InternalFormat internalFormat = InternalFormat.Rgb8) : base(gl, true)
+        public unsafe BaseRenderTarget(GL gl, uint Height, uint Width, uint Count,InternalFormat internalFormat) : base(gl)
         {
             this.Init(Height, Width, Count, internalFormat);
         }
@@ -60,7 +60,7 @@ namespace SharedProject.Base
                 throw new Exception("velké špatné");
         }
 
-        public static Base.BaseRenderTarget<TTexture> Init(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat = InternalFormat.Rgb8)
+        public static IRenderTarget Init(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat)
         {
             return new BaseRenderTarget<TTexture>(gl, Height, Width, Count, internalFormat);
         }
@@ -113,7 +113,7 @@ namespace SharedProject.Base
             return kmeansCents;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             foreach (var buf in ColorBuffers)
             {
@@ -121,6 +121,8 @@ namespace SharedProject.Base
             }
             //In order to dispose we need to delete the opengl Handle for the texure.
             Gl.DeleteFramebuffer(Handle);
+
+            base.Dispose();
         }
     }
 }

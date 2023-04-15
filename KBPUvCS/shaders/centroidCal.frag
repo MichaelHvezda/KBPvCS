@@ -115,6 +115,9 @@ void main()
 
 	if (jedna.x == smal) {
 		color0 = ToTextureRange(hsb,jedna.y);
+		color1 = vec4(0, 0, 0, 0);
+		color2 = vec4(0, 0, 0, 0);
+		return;
 		//color0 = vec4(a.x, a.y, a.z, 1);
 
 		//color0 = vec4(-a.x, -a.y, -a.z, 1);
@@ -128,6 +131,8 @@ void main()
 
 	if (dva.x == smal) {
 		color1 = ToTextureRange(hsb,dva.y);
+		color2 = vec4(0, 0, 0, 0);
+		return;
 		//color1 = vec4(a.x, a.y, a.z, 1);
 		//color1 = vec4(1, 0, 1, 0);
 	}

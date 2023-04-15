@@ -11,9 +11,6 @@ namespace SharedResProject
 {
     public static class VideoConfiguration
     {
-        public static Configuration GetConfiguration()
-        {
-            return new Configuration(new HeyRed.ImageSharp.AVCodecFormats.Mp4.Mp4ConfigurationModule());
-        }
+        public static Configuration GetConfiguration() => new Configuration(new HeyRed.ImageSharp.AVCodecFormats.Mp4.Mp4ConfigurationModule());
     }
 }

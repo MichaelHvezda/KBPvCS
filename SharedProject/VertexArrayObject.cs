@@ -1,4 +1,6 @@
-﻿using Silk.NET.OpenGL;
+﻿using SharedProject.Base;
+using SharedProject.Interface.Atomic;
+using Silk.NET.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,22 +9,16 @@ using System.Threading.Tasks;
 
 namespace SharedResProject
 {
-    public class VertexArrayObject<TVertexType, TIndexType> : IDisposable
+    public class VertexArrayObject<TVertexType, TIndexType> : BaseGLClass, IHandlerAble
         where TVertexType : unmanaged
         where TIndexType : unmanaged
     {
-        //Our Handle and the GL instance this class will use, these are private because they have no reason to be public.
-        //Most of the time you would want to abstract items to make things like this invisible.
-        private uint _handle;
-        private GL _gl;
+        public uint Handle { get; set; }
 
-        public VertexArrayObject(GL gl, BufferObject<TVertexType> vbo, BufferObject<TIndexType> ebo)
+        public VertexArrayObject(GL gl, BufferObject<TVertexType> vbo, BufferObject<TIndexType> ebo) : base(gl)
         {
-            //Saving the GL instance.
-            _gl = gl;
-
             //Setting out Handle and binding the VBO and EBO to this VAO.
-            _handle = _gl.GenVertexArray();
+            Handle = Gl.GenVertexArray();
             Bind();
             vbo.Bind();
             ebo.Bind();
@@ -31,21 +27,23 @@ namespace SharedResProject
         public unsafe void VertexAttributePointer(uint index, int count, VertexAttribPointerType type, uint vertexSize, int offSet)
         {
             //Setting up a vertex attribute pointer
-            _gl.VertexAttribPointer(index, count, type, false, vertexSize * (uint)sizeof(TVertexType), (void*)(offSet * sizeof(TVertexType)));
-            _gl.EnableVertexAttribArray(index);
+            Gl.VertexAttribPointer(index, count, type, false, vertexSize * (uint)sizeof(TVertexType), (void*)(offSet * sizeof(TVertexType)));
+            Gl.EnableVertexAttribArray(index);
         }
 
         public void Bind()
         {
             //Binding the vertex array.
-            _gl.BindVertexArray(_handle);
+            Gl.BindVertexArray(Handle);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             //Remember to dispose this object so the data GPU side is cleared.
             //We dont delete the VBO and EBO here, as you can have one VBO stored under multiple VAO's.
-            _gl.DeleteVertexArray(_handle);
+            Gl.DeleteVertexArray(Handle);
+
+            base.Dispose();
         }
     }
 }

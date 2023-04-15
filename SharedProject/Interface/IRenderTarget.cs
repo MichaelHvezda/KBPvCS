@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 
 namespace SharedProject.Interface
 {
-    public interface IRenderTarget<TRenderTarget> : IDisposable, IDrawAble, IBindAble, IMesureAble, IHandlerAble
+    public interface IRenderTarget : IDisposable, IDrawAble, IBindAble, IMesureAble, IHandlerAble
     {
-        void Init(uint Height, uint Width, uint Count, InternalFormat internalFormat = InternalFormat.Rgb);
+        public ITexture[] ColorBuffers { get; set; }
+        public GLEnum[] DrawBuffers { get; set; }
+        void Init(uint Height, uint Width, uint Count, InternalFormat internalFormat);
         float[,] RecalculateAndGetAvrColor();
-        static abstract TRenderTarget Init(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat);
+        static abstract IRenderTarget Init(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat);
     }
 }

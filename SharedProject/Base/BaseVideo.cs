@@ -14,27 +14,22 @@ using Silk.NET.Vulkan.Video;
 namespace SharedProject.Base
 {
     public class BaseVideo<TTexture, TRenderTarget> : BaseGLClass, IVideo
-        where TRenderTarget : BaseGLClass, IRenderTarget<TRenderTarget>
-        where TTexture : BaseGLClass, ITexture<TTexture>
+        where TRenderTarget : BaseGLClass, IRenderTarget
+        where TTexture : BaseGLClass, ITexture
     {
         private Image<Rgba32> video = default!;
         private SharedResProject.Shader ShaderCentrloids = default!;
         private DrawBuffer DrawBuffer = default!;
-        public TRenderTarget RenderTarget = default!;
+        public IRenderTarget RenderTarget { get; set; } = default!;
 
-        public TTexture Texture { get; set; } = default!;
+        public ITexture Texture { get; set; } = default!;
 
         public int FrameCount { get; set; }
         public bool IsNaNAbleKMeans { get; set; }
 
         public float[,] KMeans { get; set; } = new float[3, 3] { { 0.7f, 0.2f, 0.5f }, { 1f, 0.5f, 0.7f }, { 0.5f, 0.7f, 0.2f } };
         public int FramePosition { get; set; } = 0;
-        public BaseVideo(GL gl, string path, InternalFormat internalFormat = InternalFormat.Rgb) : base(gl, true)
-        {
-            Init(path, internalFormat);
-        }
-
-        public virtual unsafe void Init(string path, InternalFormat internalFormat)
+        public BaseVideo(GL gl, string path, InternalFormat internalFormat) : base(gl)
         {
             ShaderCentrloids = new SharedResProject.Shader(Gl, "centroidCal");
             DrawBuffer = new DrawBuffer(Gl);
@@ -63,7 +58,7 @@ namespace SharedProject.Base
                     Texture.Dispose();
                 }
 
-                Texture = TTexture.Init(Gl, img);
+                Texture = TTexture.Init(Gl, img, InternalFormat.Rgba8);
             }
         }
         public void GetFrame(int position)
@@ -81,16 +76,18 @@ namespace SharedProject.Base
                     Texture.Dispose();
                 }
 
-                Texture = TTexture.Init(Gl, img);
+                Texture = TTexture.Init(Gl, img, InternalFormat.Rgba8);
             }
         }
-        public void Dispose()
+        public override void Dispose()
         {
             video.Dispose();
             Texture.Dispose();
             ShaderCentrloids.Dispose();
             DrawBuffer.Dispose();
             RenderTarget.Dispose();
+
+            base.Dispose();
         }
 
         public unsafe void BindAndApplyShader()
@@ -117,17 +114,29 @@ namespace SharedProject.Base
 
         public void KMeansUnsetNaN()
         {
+            var valsF = KMeans.Cast<float>();
+            if(valsF.All(p => !float.IsNaN(p)))
+            {
+                return;
+            }
+
             for (var x = 0; x < 3; x++)
             {
                 for (var y = 0; y < 3; y++)
                 {
+                    var vals = valsF.Where(p => !float.IsNaN(p)).ToArray();
                     if (float.IsNaN(KMeans[x, y]))
                     {
-                        KMeans[x, y] = x - 1;
+                        //KMeans[x, y] = x - 1;
+                        KMeans[x, y] = vals[x];
                     }
                 }
             }
         }
 
+        public static IVideo Init(GL gl, string path, InternalFormat internalFormat)
+        {
+            return new BaseVideo<TTexture, TRenderTarget>(gl, path, internalFormat);
+        }
     }
 }

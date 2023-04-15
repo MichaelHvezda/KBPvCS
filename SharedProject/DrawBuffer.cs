@@ -1,4 +1,6 @@
-﻿using Silk.NET.OpenGL;
+﻿using SharedProject.Base;
+using SharedProject.Interface.Atomic;
+using Silk.NET.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,16 +9,14 @@ using System.Threading.Tasks;
 
 namespace SharedResProject
 {
-    public class DrawBuffer
+    public class DrawBuffer : BaseGLClass
     {
-        private static BufferObject<float> Vbo;
-        private static BufferObject<uint> Ebo;
-        private static VertexArrayObject<float, uint> Vao;
-        private GL Gl;
+        private readonly BufferObject<float> Vbo;
+        private readonly BufferObject<uint> Ebo;
+        private readonly VertexArrayObject<float, uint> Vao;
 
-        public DrawBuffer(GL _gl)
+        public DrawBuffer(GL gl) : base(gl)
         {
-            Gl = _gl;
             Ebo = new BufferObject<uint>(Gl, Indices, BufferTargetARB.ElementArrayBuffer);
             Vbo = new BufferObject<float>(Gl, Vertices, BufferTargetARB.ArrayBuffer);
             Vao = new VertexArrayObject<float, uint>(Gl, Vbo, Ebo);
@@ -45,12 +45,14 @@ namespace SharedResProject
             Vao.Bind();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             //Remember to dispose all the instances.
             Vbo.Dispose();
             Ebo.Dispose();
             Vao.Dispose();
+
+            base.Dispose();
         }
 
     }

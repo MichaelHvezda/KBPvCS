@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using SharedProject.Base;
+using SharedProject.Interface;
 using SharedResProject;
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -21,15 +22,21 @@ namespace KBPUvCS
         //Our new abstracted objects, here we specify what the types are.
 
         private static SharedResProject.Shader Shader;
+        private static SharedResProject.Shader BaseShader;
         private static DrawBuffer DrawBufferr;
         private static BaseTexture Texture;
-        private static BaseVideo<BaseTexture, BaseRenderTarget<BaseTexture>> Video;
+        private static Video<BaseTexture, BaseRenderTarget<BaseTexture>> Video;
 
         public static int FramePosition { get; set; } = 0;
         public static int ImagePosition { get; set; } = 0;
         public static bool VideoStop { get; set; }
 
         public static DateTime DateNow { get; set; }
+
+
+        private static readonly float GreenH = 95 / 360f;
+        private static readonly float BlueH = 230 / 360f;
+
         private static void Main(string[] args)
         {
             var options = WindowOptions.Default;
@@ -57,8 +64,9 @@ namespace KBPUvCS
             //Instantiating our new abstractions
             DrawBufferr = new(Gl);
             Shader = new(Gl, "kmean");
-            Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
-            Video = new(Gl, ResourcesProvider.Cat, InternalFormat.Rgba16f);
+            BaseShader = new(Gl, "shader");
+            Texture = new (Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
+            Video = new (Gl, ResourcesProvider.Cat, InternalFormat.Rgba16f);
             Video.KMeans = new float[3, 3] { { 0.7f, 0.2f, 0.5f }, { 1f, 0.5f, 0.7f }, { 0.5f, 0.7f, 0.2f } };
 
             Console.WriteLine("res loaded");
@@ -69,31 +77,44 @@ namespace KBPUvCS
             Gl.Clear(ClearBufferMask.ColorBufferBit);
 
             DrawBufferr.Bind();
-            Shader.Use();
-            //Bind a texture and and set the uTexture0 to use texture0.
 
-            Video.Texture.Bind(TextureUnit.Texture0);
+            //Shader.Use();
+            ////Bind a texture and and set the uTexture0 to use texture0.
+
+            //Video.Texture.Bind(TextureUnit.Texture0);
+            //Shader.SetUniform("uTexture0", 0);
+
+            //Texture.Bind(TextureUnit.Texture1);
+            //Shader.SetUniform("uTexture1", 1);
+
+            //Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
+            //Shader.SetUniform("uTexture2", 2);
+
+            BaseShader.Use();
+            Video.RenderTarget.ColorBuffers[Video.GetBGTextureId(GreenH)].Bind(TextureUnit.Texture0);
             Shader.SetUniform("uTexture0", 0);
-
-            Texture.Bind(TextureUnit.Texture1);
-            Shader.SetUniform("uTexture1", 1);
-
-            Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
-            Shader.SetUniform("uTexture2", 2);
 
             Gl.DrawElements(PrimitiveType.Triangles, (uint)DrawBuffer.Indices.Length, DrawElementsType.UnsignedInt, null);
 
             if (!VideoStop)
             {
-                foreach (var i in Video.KMeans)
+                for (var x = 0; x < 3; x++)
                 {
-                    Console.Write(i + " ");
+                    Console.Write("{");
+                    for (var y = 0; y < 3; y++)
+                    {
+
+                        Console.Write(Video.KMeans[x,y] + " ");
+                    }
+
+                    Console.Write("}, ");
                 }
                 Console.WriteLine();
 
                 Video.NextFrame();
                 Video.BindAndApplyShader();
                 Console.WriteLine(Video.FramePosition);
+                Console.WriteLine("BG image ID " + Video.GetBGTextureId(GreenH));
             }
             if (Video.FramePosition == 0)
             {

@@ -8,15 +8,18 @@ using System.Threading.Tasks;
 
 namespace SharedProject.Base
 {
-    public class BaseGLClass : IGLAble, IInitAble
+    public class BaseGLClass : IGLAble, IDisposable
     {
         public GL Gl { get; set; }
-        public bool Inicialized { get; set; }
 
-        public BaseGLClass(GL gl, bool inicialized)
+        public BaseGLClass(GL gl)
         {
             this.Gl = gl;
-            this.Inicialized = inicialized;
+        }
+
+        public virtual void Dispose()
+        {
+
         }
     }
 }

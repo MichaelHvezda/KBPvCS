@@ -7,9 +7,15 @@ using System.Threading.Tasks;
 
 namespace SharedProject.Interface
 {
-    internal interface IVideo
+    public interface IVideo : IDisposable
     {
+        IRenderTarget RenderTarget { get; set; }
+        ITexture Texture { get; set; }
+        float[,] KMeans { get; set; }
+        bool IsNaNAbleKMeans { get; set; }
+        int FramePosition { get; set; }
         void NextFrame();
-        void Init( string path, InternalFormat internalFormat);
+        void BindAndApplyShader();
+        static abstract IVideo Init(GL gl, string path, InternalFormat internalFormat);
     }
 }

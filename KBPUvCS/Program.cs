@@ -42,6 +42,7 @@ namespace KBPUvCS
             var options = WindowOptions.Default;
             options.Size = new Vector2D<int>(800, 600);
             options.Title = "LearnOpenGL with Silk.NET";
+            options.VSync = false;
             window = Silk.NET.Windowing.Window.Create(options);
             window.Load += OnLoad;
             window.Render += OnRender;
@@ -65,9 +66,10 @@ namespace KBPUvCS
             DrawBufferr = new(Gl);
             Shader = new(Gl, "kmean");
             BaseShader = new(Gl, "shader");
-            Texture = new (Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
-            Video = new (Gl, ResourcesProvider.Cat, InternalFormat.Rgba16f);
+            Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
+            Video = new(Gl, ResourcesProvider.Video3, InternalFormat.Rgba16f);
             Video.KMeans = new float[3, 3] { { 0.7f, 0.2f, 0.5f }, { 1f, 0.5f, 0.7f }, { 0.5f, 0.7f, 0.2f } };
+            //Video.KMeans = new float[3, 3] { { 50.28f/360.0f, 19.13f/100.0f, 49.56f / 100.0f }, { 200.46f / 360.0f, 87.40f / 100.0f, 71.90f / 100.0f }, { 192.81f / 360.0f, 24.81f / 100.0f, 26.75f / 100.0f } };
 
             Console.WriteLine("res loaded");
             DateNow = DateTime.Now;
@@ -78,21 +80,21 @@ namespace KBPUvCS
 
             DrawBufferr.Bind();
 
-            //Shader.Use();
-            ////Bind a texture and and set the uTexture0 to use texture0.
+            Shader.Use();
+            //Bind a texture and and set the uTexture0 to use texture0.
 
-            //Video.Texture.Bind(TextureUnit.Texture0);
-            //Shader.SetUniform("uTexture0", 0);
-
-            //Texture.Bind(TextureUnit.Texture1);
-            //Shader.SetUniform("uTexture1", 1);
-
-            //Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
-            //Shader.SetUniform("uTexture2", 2);
-
-            BaseShader.Use();
-            Video.RenderTarget.ColorBuffers[Video.GetBGTextureId(GreenH)].Bind(TextureUnit.Texture0);
+            Video.Texture.Bind(TextureUnit.Texture0);
             Shader.SetUniform("uTexture0", 0);
+
+            Texture.Bind(TextureUnit.Texture1);
+            Shader.SetUniform("uTexture1", 1);
+
+            Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
+            Shader.SetUniform("uTexture2", 2);
+
+            //BaseShader.Use();
+            //Video.RenderTarget.ColorBuffers[Video.GetBGTextureId(GreenH)].Bind(TextureUnit.Texture0);
+            //Shader.SetUniform("uTexture0", 0);
 
             Gl.DrawElements(PrimitiveType.Triangles, (uint)DrawBuffer.Indices.Length, DrawElementsType.UnsignedInt, null);
 
@@ -103,8 +105,12 @@ namespace KBPUvCS
                     Console.Write("{");
                     for (var y = 0; y < 3; y++)
                     {
-
-                        Console.Write(Video.KMeans[x,y] + " ");
+                        if (y == 0)
+                        {
+                            Console.Write(Video.KMeans[x, y] * 360.0f + " ");
+                            continue;
+                        }
+                        Console.Write(Video.KMeans[x, y] * 100.0f + " ");
                     }
 
                     Console.Write("}, ");
@@ -114,11 +120,13 @@ namespace KBPUvCS
                 Video.NextFrame();
                 Video.BindAndApplyShader();
                 Console.WriteLine(Video.FramePosition);
-                Console.WriteLine("BG image ID " + Video.GetBGTextureId(GreenH));
+                Console.WriteLine("BG image ID " + Video.GetBGTextureId(BlueH));
+
             }
             if (Video.FramePosition == 0)
             {
-                Console.WriteLine((DateNow - DateTime.Now).TotalMilliseconds);
+                var fps = Video.FrameCount / (decimal)(DateTime.Now - DateNow).Seconds;
+                Console.WriteLine($"{fps} fps");
                 DateNow = DateTime.Now;
             }
         }
@@ -131,12 +139,11 @@ namespace KBPUvCS
         private static void OnClose()
         {
             //Remember to dispose all the instances.
-            DrawBufferr.Dispose();
-            Shader.Dispose();
-            Texture.Dispose();
-            Video.Dispose();
-            Gl.Dispose();
-            //RenderTarget.Dispose();
+            DrawBufferr?.Dispose();
+            Shader?.Dispose();
+            Texture?.Dispose();
+            Video?.Dispose();
+            Gl?.Dispose();
         }
 
         private static void KeyDown(IKeyboard arg1, Key arg2, int arg3)
@@ -162,6 +169,11 @@ namespace KBPUvCS
             if (arg2 == Key.S)
             {
                 VideoStop = !VideoStop;
+            }
+            if (arg2 == Key.N)
+            {
+                Video.NextFrame();
+                Video.BindAndApplyShader();
             }
         }
     }

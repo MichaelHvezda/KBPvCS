@@ -10,9 +10,9 @@ using Silk.NET.Windowing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Data;
 
-namespace KBPvCS
+namespace KBPUvCS
 {
     class Program
     {
@@ -22,19 +22,27 @@ namespace KBPvCS
         //Our new abstracted objects, here we specify what the types are.
 
         private static SharedResProject.Shader Shader;
+        private static SharedResProject.Shader BaseShader;
         private static DrawBuffer DrawBufferr;
-        private static ITexture Texture;
-        private static IVideo Video;
+        private static BaseTexture Texture;
+        private static Video Video;
 
         public static int FramePosition { get; set; } = 0;
         public static int ImagePosition { get; set; } = 0;
+        public static bool VideoStop { get; set; }
+
         public static DateTime DateNow { get; set; }
+
+
+        private static readonly float GreenH = 95 / 360f;
+        private static readonly float BlueH = 230 / 360f;
 
         private static void Main(string[] args)
         {
             var options = WindowOptions.Default;
             options.Size = new Vector2D<int>(800, 600);
             options.Title = "LearnOpenGL with Silk.NET";
+            options.VSync = false;
             window = Silk.NET.Windowing.Window.Create(options);
             window.Load += OnLoad;
             window.Render += OnRender;
@@ -56,9 +64,11 @@ namespace KBPvCS
 
             //Instantiating our new abstractions
             DrawBufferr = new(Gl);
-            Shader = new (Gl, "kmean");
-            Texture = new BaseTexture(Gl, ResourcesProvider.Back, InternalFormat.Rgba8);
-            Video = new BaseVideo<BaseTexture, BaseRenderTarget<BaseTexture>>(Gl, ResourcesProvider.Video3, InternalFormat.Rgba8);
+            Shader = new(Gl, "kmean");
+            BaseShader = new(Gl, "shader");
+            Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
+            Video = new(Gl, ResourcesProvider.Video3, InternalFormat.Rgba16f);
+            Video.KMeans = new float[3, 3] { { 0.7f, 0.2f, 0.5f }, { 1f, 0.5f, 0.7f }, { 0.5f, 0.7f, 0.2f } };
 
             Console.WriteLine("res loaded");
             DateNow = DateTime.Now;
@@ -68,6 +78,7 @@ namespace KBPvCS
             Gl.Clear(ClearBufferMask.ColorBufferBit);
 
             DrawBufferr.Bind();
+
             Shader.Use();
             //Bind a texture and and set the uTexture0 to use texture0.
 
@@ -77,23 +88,39 @@ namespace KBPvCS
             Texture.Bind(TextureUnit.Texture1);
             Shader.SetUniform("uTexture1", 1);
 
-            Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
+            //Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
+            //Shader.SetUniform("uTexture2", 2);
+
+            //BaseShader.Use();
+            Video.RenderTarget.ColorBuffers[Video.GetBGTextureId(BlueH)].Bind(TextureUnit.Texture2);
             Shader.SetUniform("uTexture2", 2);
 
             Gl.DrawElements(PrimitiveType.Triangles, (uint)DrawBuffer.Indices.Length, DrawElementsType.UnsignedInt, null);
 
-            //foreach (var i in Video.KMeans)
-            //{
-            //  Console.Write(i + " ");
-            //}
-            //Console.WriteLine();
+            if (!VideoStop)
+            {
+                for (var x = 0; x < 3; x++)
+                {
+                    Console.Write("{");
+                    for (var y = 0; y < 3; y++)
+                    {
+                        Console.Write(Video.KMeans[x, y] + " ");
+                    }
 
-            Video.NextFrame();
-            Video.BindAndApplyShader();
-            //Console.WriteLine(Video.FramePosition);
+                    Console.Write("}, ");
+                }
+                Console.WriteLine();
+
+                Video.NextFrame();
+                Video.BindAndApplyShader();
+                Console.WriteLine(Video.FramePosition);
+                Console.WriteLine("BG image ID " + Video.GetBGTextureId(BlueH));
+
+            }
             if (Video.FramePosition == 0)
             {
-                Console.WriteLine((DateNow - DateTime.Now).TotalMilliseconds);
+                var fps = Video.FrameCount / (decimal)(DateTime.Now - DateNow).Seconds;
+                Console.WriteLine($"{fps} fps");
                 DateNow = DateTime.Now;
             }
         }
@@ -111,7 +138,6 @@ namespace KBPvCS
             Texture?.Dispose();
             Video?.Dispose();
             Gl?.Dispose();
-            //RenderTarget.Dispose();
         }
 
         private static void KeyDown(IKeyboard arg1, Key arg2, int arg3)
@@ -129,6 +155,19 @@ namespace KBPvCS
             {
                 ImagePosition--;
                 ImagePosition = (ImagePosition + 3) % 3;
+            }
+            if (arg2 == Key.Space)
+            {
+                Video.IsNaNAbleKMeans = !Video.IsNaNAbleKMeans;
+            }
+            if (arg2 == Key.S)
+            {
+                VideoStop = !VideoStop;
+            }
+            if (arg2 == Key.N)
+            {
+                Video.NextFrame();
+                Video.BindAndApplyShader();
             }
         }
     }

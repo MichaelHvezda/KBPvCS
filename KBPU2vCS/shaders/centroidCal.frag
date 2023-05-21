@@ -1,4 +1,4 @@
-﻿#version 330 core
+﻿#version 460 core
 in vec2 TexCoord;
 
 //A uniform of the type sampler2D will have the storage value of our texture.
@@ -109,7 +109,6 @@ void main()
 	vec2 jedna = Vzdalenost(hsb, cent1hsb);
 	vec2 dva = Vzdalenost(hsb, cent2hsb);
 	vec2 tri = Vzdalenost(hsb, cent3hsb);
-
 
 	float smal = min(min(jedna.x, dva.x), tri.x);
 

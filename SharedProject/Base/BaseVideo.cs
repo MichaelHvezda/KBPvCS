@@ -25,7 +25,7 @@ namespace SharedProject.Base
         public ITexture Texture { get; set; } = default!;
 
         public int FrameCount { get; set; }
-        public bool IsNaNAbleKMeans { get; set; }
+        public bool IsNaNAbleKMeans { get; set; } = true;
 
         public float[,] KMeans { get; set; } = new float[3, 3] { { 0.7f, 0.2f, 0.5f }, { 1f, 0.5f, 0.7f }, { 0.5f, 0.7f, 0.2f } };
         public int FramePosition { get; set; } = 0;
@@ -81,11 +81,11 @@ namespace SharedProject.Base
         }
         public override void Dispose()
         {
-            video.Dispose();
-            Texture.Dispose();
-            ShaderCentrloids.Dispose();
-            DrawBuffer.Dispose();
-            RenderTarget.Dispose();
+            video?.Dispose();
+            Texture?.Dispose();
+            ShaderCentrloids?.Dispose();
+            DrawBuffer?.Dispose();
+            RenderTarget?.Dispose();
 
             base.Dispose();
         }
@@ -115,7 +115,7 @@ namespace SharedProject.Base
         public void KMeansUnsetNaN()
         {
             var valsF = KMeans.Cast<float>();
-            if(valsF.All(p => !float.IsNaN(p)))
+            if (valsF.All(p => !float.IsNaN(p)))
             {
                 return;
             }

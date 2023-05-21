@@ -1,4 +1,4 @@
-﻿#version 330 core
+﻿#version 460 core
 #extension GL_ARB_explicit_uniform_location : enable
 in vec2 TexCoord;
 
@@ -18,7 +18,7 @@ void main()
     vec4 b = texture(uTexture1, TexCoord);
     vec4 c = texture(uTexture2, yRotate);
 
-    if(c.w == 1){
+    if(c.w == 1 && (c.y > 0.35f && c.z > 0.35f)){
         FragColor = b;
     }else{
         FragColor = a;

@@ -117,7 +117,7 @@ namespace SharedProject.Base
         {
             foreach (var buf in ColorBuffers)
             {
-                buf.Dispose();
+                buf?.Dispose();
             }
             //In order to dispose we need to delete the opengl Handle for the texure.
             Gl.DeleteFramebuffer(Handle);

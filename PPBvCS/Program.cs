@@ -77,8 +77,8 @@ namespace PPBvCS
         private static void OnClose()
         {
             //Remember to dispose all the instances.
-            Gl.Dispose();
-            Texture.Dispose();
+            Gl?.Dispose();
+            Texture?.Dispose();
             //RenderTarget.Dispose();
         }
     }

@@ -3,13 +3,20 @@ using System.Drawing;
 
 Console.WriteLine("Hello, World!");
 
-MainFce(out var col0, out var col1, out var col2);
-MainFceJava(out var col3);
+MainFce(out var col01, out var col11, out var col21);
+MainFceJava(out var col32);
+MainNew(out var col0, out var col1, out var col2, out var col3);
 
 Console.WriteLine(col0);
 Console.WriteLine(col1);
 Console.WriteLine(col2);
 Console.WriteLine(col3);
+
+Console.WriteLine(col01);
+Console.WriteLine(col11);
+Console.WriteLine(col21);
+
+Console.WriteLine(col32);
 
 void MainFce(out vec3 color0, out vec3 color1, out vec3 color2)
 {
@@ -84,9 +91,9 @@ void MainFce(out vec3 color0, out vec3 color1, out vec3 color2)
 
 void MainFceJava(out vec3 color0)
 {
-    vec3 cent1 = new vec3(50.280f/255f, 19.13f/255f, 49.56f/255f);
-    vec3 cent2 = new vec3(200.46f/255f, 87.40f/255f, 71.90f/255f);
-    vec3 cent3 = new vec3(192.81f/255f, 24.81f/255f, 26.75f/255f);
+    vec3 cent1 = new vec3(50.280f / 255f, 19.13f / 255f, 49.56f / 255f);
+    vec3 cent2 = new vec3(200.46f / 255f, 87.40f / 255f, 71.90f / 255f);
+    vec3 cent3 = new vec3(192.81f / 255f, 24.81f / 255f, 26.75f / 255f);
     //zjisteni barvy popredi a pozadi
     vec4 outColor = new vec4(50, 66, 62, 1);
     vec4 colorBack = new vec4(0.05f * 255, 0.4f * 255, 0.596f * 255, 1);
@@ -114,7 +121,7 @@ void MainFceJava(out vec3 color0)
     {
         if (jednaBack == smalBack)
         {
-            color0 = new vec4(255,0,0,1) ;
+            color0 = new vec4(255, 0, 0, 1);
             return;
         }
     }
@@ -139,6 +146,83 @@ void MainFceJava(out vec3 color0)
     color0 = outColor;
 }
 
+void MainNew(out vec3 color0, out vec3 color1, out vec3 color2, out vec3 color3)
+{
+    vec3 cent1 = new vec3(0.7f, 0.2f, 0.5f);
+    vec3 cent2 = new vec3(1f, 0.5f, 0.7f);
+    vec3 cent3 = new vec3(0.5f, 0.7f, 0.2f); ;
+    vec3 cent4 = new vec3(0.5555f, 0.0f, 0.0f); ;
+
+    //zjisteni barvy popredi a pozadi
+    vec4 outColor = new vec4(50, 66, 62, 1);
+    vec4 colorBack = new vec4(0.05f * 255, 0.4f * 255, 0.596f * 255, 1);
+
+    vec4 a = new vec4(32, 168, 199, 1);
+    vec3 hsb = RgbToHsb(a.xyz);
+
+    vec3 cent1hsb = ToShaderRange(cent1);
+    vec3 cent2hsb = ToShaderRange(cent2);
+    vec3 cent3hsb = ToShaderRange(cent3);
+
+    vec3 colBack = ToShaderRange(cent4);
+
+
+    vec2 jednaBack = Vzdalenost(colBack, cent1hsb);
+    vec2 dvaBack = Vzdalenost(colBack, cent2hsb);
+    vec2 triBack = Vzdalenost(colBack, cent3hsb);
+
+    vec2 jedna = Vzdalenost(hsb, cent1hsb);
+    vec2 dva = Vzdalenost(hsb, cent2hsb);
+    vec2 tri = Vzdalenost(hsb, cent3hsb);
+
+    float smal = min(min(jedna.x, dva.x), tri.x);
+    float smalBack = min(min(jednaBack.x, dvaBack.x), triBack.x);
+    color3 = new vec4(0, 0, 0, 0);
+    if (jedna.x == smal)
+    {
+        color0 = ToTextureRange(hsb, jedna.y);
+        color1 = new vec4(0, 0, 0, 0);
+        color2 = new vec4(0, 0, 0, 0);
+
+        if (jednaBack.x == smalBack)
+        {
+            color3 = ToTextureRange(hsb, jednaBack.y); ;
+        }
+    }
+    else
+    {
+        color0 = new vec4(0, 0, 0, 0);
+    }
+
+    if (dva.x == smal)
+    {
+        color1 = ToTextureRange(hsb, dva.y);
+        color2 = new vec4(0, 0, 0, 0);
+
+        if (dvaBack.x == smalBack)
+        {
+            color3 = ToTextureRange(hsb, dvaBack.y); ;
+        }
+    }
+    else
+    {
+        color1 = new vec4(0, 0, 0, 0);
+    }
+
+    if (tri.x == smal)
+    {
+        color2 = ToTextureRange(hsb, tri.y);
+
+        if (triBack.x == smalBack)
+        {
+            color3 = ToTextureRange(hsb, triBack.y); ;
+        }
+    }
+    else
+    {
+        color2 = new vec4(0, 0, 0, 0);
+    }
+}
 float small(float a, float b, float c)
 {
     return min(min(a, b), c);
@@ -207,9 +291,9 @@ float MaxnIsZero(float maxn, float minn)
 
 vec3 RgbToHsb(vec3 a)
 {
-    float r = (a.x)/255;
-    float g = (a.y)/255;
-    float b = (a.z)/255;
+    float r = (a.x) / 255;
+    float g = (a.y) / 255;
+    float b = (a.z) / 255;
 
     float maxn = max(r, max(g, b));
     float minn = min(r, min(g, b));
@@ -258,7 +342,7 @@ vec4 ToTextureRange(vec3 a, float b)
     //h - -1/1
     //s - 0/1
     //maxn - 0/1
-    return new vec4( mod((b + (a.x / 360.0f)), 1), a.y, a.z, 1);
+    return new vec4(mod((b + (a.x / 360.0f)), 1), a.y, a.z, 1);
 }
 
 float mod(float firstNumber, float scndNumber)

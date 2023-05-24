@@ -7,11 +7,13 @@ uniform sampler2D uTexture0;
 uniform vec3 cent1;
 uniform vec3 cent2;
 uniform vec3 cent3;
+uniform vec3 cent4;
 
 //out vec4 FragColor;
 layout (location = 0) out vec4 color0;
 layout (location = 1) out vec4 color1;
 layout (location = 2) out vec4 color2;
+layout (location = 3) out vec4 color3;
 
 
 float NaDruhou(float firstNumber, float scndNumber) {
@@ -106,33 +108,55 @@ void main()
 	vec3 cent2hsb = ToShaderRange(cent2);
 	vec3 cent3hsb = ToShaderRange(cent3);
 
+	vec3 colBack = RgbToHsb(cent4);
+
+
+	vec2 jednaBack = Vzdalenost(colBack,cent1hsb);
+	vec2 dvaBack = Vzdalenost(colBack,cent2hsb);
+	vec2 triBack = Vzdalenost(colBack,cent3hsb);
+
 	vec2 jedna = Vzdalenost(hsb, cent1hsb);
 	vec2 dva = Vzdalenost(hsb, cent2hsb);
 	vec2 tri = Vzdalenost(hsb, cent3hsb);
 
 	float smal = min(min(jedna.x, dva.x), tri.x);
+	float smalBack = min(min(jednaBack.x, dvaBack.x), triBack.x);
 
+	vec4 recColBack = ToTextureRange(hsb,jednaBack.y);
+	vec4 recCol = ToTextureRange(hsb,jedna.y);
+
+	color3 = vec4(0, 0, 0, 0);
 	if (jedna.x == smal) {
-		color0 = ToTextureRange(hsb,jedna.y);
+		color0 = recCol;
 		color1 = vec4(0, 0, 0, 0);
 		color2 = vec4(0, 0, 0, 0);
-		return;
+
+		if(jednaBack.x==smalBack && (recColBack.y > 0.35f && recColBack.z > 0.35f)){
+			color3 = recColBack;
+		}
 	}
 	else {
 		color0 = vec4(0, 0, 0, 0);
 	}
 
 	if (dva.x == smal) {
-		color1 = ToTextureRange(hsb,dva.y);
+		color1 = recCol;
 		color2 = vec4(0, 0, 0, 0);
-		return;
+
+		if(dvaBack.x==smalBack && (recColBack.y > 0.35f && recColBack.z > 0.35f)){
+			color3 = recColBack;
+		}
 	}
 	else {
 		color1 = vec4(0, 0, 0, 0);
 	}
 
 	if (tri.x == smal) {
-		color2 = ToTextureRange(hsb,tri.y);
+		color2 = recCol;
+
+		if(triBack.x==smalBack && (recColBack.y > 0.35f && recColBack.z > 0.35f)){
+			color3 = recColBack;
+		}
 	}
 	else {
 		color2 = vec4(0, 0, 0, 0);

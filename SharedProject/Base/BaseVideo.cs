@@ -17,9 +17,9 @@ namespace SharedProject.Base
         where TRenderTarget : BaseGLClass, IRenderTarget
         where TTexture : BaseGLClass, ITexture
     {
-        private Image<Rgba32> video = default!;
-        private SharedResProject.Shader ShaderCentrloids = default!;
-        private DrawBuffer DrawBuffer = default!;
+        public Image<Rgba32> video { get; } = default!;
+        public SharedResProject.Shader ShaderCentrloids { get; } = default!;
+        public DrawBuffer DrawBuffer { get; } = default!;
         public IRenderTarget RenderTarget { get; set; } = default!;
 
         public ITexture Texture { get; set; } = default!;
@@ -40,6 +40,19 @@ namespace SharedProject.Base
             Texture = TTexture.Init(Gl, video.Frames[FramePosition], internalFormat);
 
             RenderTarget = TRenderTarget.Init(Gl, Texture.Height, Texture.Width, 3, internalFormat);
+            BindAndApplyShader();
+        }
+        public BaseVideo(GL gl, string path, InternalFormat internalFormat,uint renderTargetSize) : base(gl)
+        {
+            ShaderCentrloids = new SharedResProject.Shader(Gl, "centroidCal");
+            DrawBuffer = new DrawBuffer(Gl);
+
+            video = Image.Load<Rgba32>(VideoConfiguration.GetConfiguration(), path);
+            FrameCount = video.Frames.Count;
+
+            Texture = TTexture.Init(Gl, video.Frames[FramePosition], internalFormat);
+
+            RenderTarget = TRenderTarget.Init(Gl, Texture.Height, Texture.Width, renderTargetSize, internalFormat);
             BindAndApplyShader();
         }
 
@@ -63,11 +76,10 @@ namespace SharedProject.Base
         }
         public void GetFrame(int position)
         {
-            var positionInter = position;
-            if (FrameCount <= positionInter || positionInter < 0)
-                positionInter = 0;
+            if (FrameCount <= position || position < 0)
+                position = 0;
 
-            var img = video.Frames[positionInter];
+            var img = video.Frames[position];
 
             if (img.PixelBuffer is not null)
             {

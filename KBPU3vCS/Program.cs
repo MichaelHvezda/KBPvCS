@@ -12,7 +12,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Data;
 
-namespace KBPU2vCS;
+namespace KBPU21vCS;
 class Program
 {
     private static IWindow window;
@@ -64,8 +64,8 @@ class Program
         DrawBufferr = new(Gl);
         Shader = new(Gl, "kmean");
         Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
-        Video = new(Gl, ResourcesProvider.Video4K, InternalFormat.Rgba16f);
-        Video.KMeans = new float[3, 3] { { 0.7f, 0.2f, 0.5f }, { 1f, 0.5f, 0.7f }, { 0.5f, 0.7f, 0.2f } };
+        Video = new(Gl, ResourcesProvider.Video3, InternalFormat.Rgba16f, 4);
+        Video.KMeans = new float[4, 3] { { 0.7f, 0.2f, 0.5f }, { 1f, 0.5f, 0.7f }, { 0.4f, 0.7f, 0.2f }, { BlueH, 0.0f, 0.0f } };
 
         Console.WriteLine("res loaded");
         DateNow = DateTime.Now;
@@ -85,32 +85,31 @@ class Program
         Texture.Bind(TextureUnit.Texture1);
         Shader.SetUniform("uTexture1", 1);
 
-        Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
-        Shader.SetUniform("uTexture2", 2);
-
-        //Video.RenderTarget.ColorBuffers[Video.GetBGTextureId(BlueH)].Bind(TextureUnit.Texture2);
+        //Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
         //Shader.SetUniform("uTexture2", 2);
+
+        Video.RenderTarget.ColorBuffers[3].Bind(TextureUnit.Texture2);
+        Shader.SetUniform("uTexture2", 2);
 
         Gl.DrawElements(PrimitiveType.Triangles, (uint)DrawBuffer.Indices.Length, DrawElementsType.UnsignedInt, null);
 
         if (!VideoStop)
         {
-            //for (var x = 0; x < 3; x++)
-            //{
-            //    Console.Write("{");
-            //    for (var y = 0; y < 3; y++)
-            //    {
-            //        Console.Write(Video.KMeans[x, y] + " ");
-            //    }
+            for (var x = 0; x < 4; x++)
+            {
+                Console.Write("{");
+                for (var y = 0; y < 3; y++)
+                {
+                    Console.Write(Video.KMeans[x, y] + " ");
+                }
 
-            //    Console.Write("}, ");
-            //}
-            //Console.WriteLine();
+                Console.Write("}, ");
+            }
+            Console.WriteLine();
 
             Video.NextFrame();
             Video.BindAndApplyShader();
-            //Console.WriteLine(Video.FramePosition);
-            //Console.WriteLine("BG image ID " + Video.GetBGTextureId(BlueH));
+            Console.WriteLine(Video.FramePosition);
 
         }
         if (Video.FramePosition == 0)

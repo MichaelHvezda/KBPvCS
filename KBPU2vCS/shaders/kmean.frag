@@ -9,7 +9,6 @@ layout (location = 2) uniform sampler2D uTexture2;
 
 out vec4 FragColor;
 
-layout (location = 0) out vec4 color;
 void main()
 {
     vec2 yRotate = vec2(TexCoord.x,1 - TexCoord.y);
@@ -24,7 +23,6 @@ void main()
         FragColor = a;
     }
 
-    color = FragColor;
 
     //FragColor = vec4(1,0,1,1);
 }

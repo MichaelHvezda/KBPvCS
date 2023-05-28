@@ -22,12 +22,14 @@ public class Video : BaseVideo<BaseTexture, BaseRenderTarget<BaseTexture>>
     {
         List<(float, uint)> values = new()
             {
-                (base.KMeans[0, 2] - bgVal, 0),
-                (base.KMeans[1, 2] - bgVal, 1),
-                (base.KMeans[2, 2] - bgVal, 2)
+                (Math.Abs(base.KMeans[0, 2] - bgVal), 0),
+                (Math.Abs(base.KMeans[1, 2] - bgVal), 1),
+                (Math.Abs(base.KMeans[2, 2] - bgVal), 2)
             };
 
-        return values.OrderByDescending(p => p.Item1).First().Item2;
+        var first = values.OrderBy(p => p.Item1).First();
+
+        return first.Item2;
     }
 
     public static new IVideo Init(GL gl, string path, InternalFormat internalFormat)

@@ -1,4 +1,10 @@
-﻿// See https://aka.ms/new-console-template for more information
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Microsoft.VisualBasic.Devices;
+using System.Data;
+using System.Drawing;
+using System.Windows.Forms;
+using Silk.NET.Windowing;
 using SharedProject.Base;
 using SharedProject.Interface;
 using SharedResProject;
@@ -7,13 +13,11 @@ using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 using Silk.NET.Windowing;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using System;
-using System.Data;
+using System.Xml;
 
-namespace KBPU2vCS;
-class Program
+namespace KBPUsWFvCS;
+
+static class Program
 {
     private static IWindow window;
     private static GL Gl;
@@ -24,29 +28,27 @@ class Program
     private static DrawBuffer DrawBufferr;
     private static BaseTexture Texture;
     private static Video Video;
-
-    public static int FramePosition { get; set; } = 0;
-    public static int ImagePosition { get; set; } = 0;
+    private static Form FormSetting;
     public static bool VideoStop { get; set; }
 
     public static DateTime DateNow { get; set; }
 
 
-    private static readonly float GreenH = 95 / 360f;
-    private static readonly float BlueH = 220 / 360f;
 
-    private static void Main(string[] args)
+    static void Main()
     {
+        // To customize application configuration such as set high DPI settings or default font,
+        // see https://aka.ms/applicationconfiguration.
         var options = WindowOptions.Default;
         options.Size = new Vector2D<int>(800, 600);
         options.Title = "LearnOpenGL with Silk.NET";
         options.VSync = false;
         window = Silk.NET.Windowing.Window.Create(options);
         window.Load += OnLoad;
+        window.Update += OnUpdate;
         window.Render += OnRender;
         window.Resize += OnResize;
         window.Closing += OnClose;
-
         window.Run();
     }
 
@@ -64,11 +66,21 @@ class Program
         DrawBufferr = new(Gl);
         Shader = new(Gl, "kmean");
         Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
-        Video = new(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba16f);
-        Video.KMeans = new float[3, 3] { { 0.7f, 0.2f, 0.5f }, { 1f, 0.5f, 0.7f }, { 0.5f, 0.7f, 0.2f } };
+        Video = new(Gl, ResourcesProvider.Video3, InternalFormat.Rgba16f);
+
+        FormSetting = new Form1();
+        FormSetting.Show();
 
         Console.WriteLine("res loaded");
         DateNow = DateTime.Now;
+    }
+    private static unsafe void OnUpdate(double obj)
+    {
+        if (FormSetting.IsDisposed)
+        {
+            window.Close();
+        }
+        FormSetting.Update();
     }
     private static unsafe void OnRender(double obj)
     {
@@ -77,6 +89,8 @@ class Program
         DrawBufferr.Bind();
 
         Shader.Use();
+
+        Gl.Viewport(0, 0, Texture.Width, Texture.Height);
         //Bind a texture and and set the uTexture0 to use texture0.
 
         Video.Texture.Bind(TextureUnit.Texture0);
@@ -85,11 +99,11 @@ class Program
         Texture.Bind(TextureUnit.Texture1);
         Shader.SetUniform("uTexture1", 1);
 
-        //Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
-        //Shader.SetUniform("uTexture2", 2);
 
-        Video.RenderTarget.ColorBuffers[Video.GetBGTextureId(BlueH)].Bind(TextureUnit.Texture2);
-        Shader.SetUniform("uTexture2", 2);
+        Shader.SetUniform("Saturation", Settings.Saturation / 100);
+        Shader.SetUniform("KeyColor", Settings.KeyColor * 360);
+        Shader.SetUniform("Brightness", Settings.Brightness / 100);
+        Shader.SetUniform("Hue", Settings.Hue);
 
         Gl.DrawElements(PrimitiveType.Triangles, (uint)DrawBuffer.Indices.Length, DrawElementsType.UnsignedInt, null);
 
@@ -108,7 +122,7 @@ class Program
             //Console.WriteLine();
 
             Video.NextFrame();
-            Video.BindAndApplyShader();
+            //Video.BindAndApplyShader();
             //Console.WriteLine(Video.FramePosition);
             //Console.WriteLine("BG image ID " + Video.GetBGTextureId(BlueH));
 
@@ -119,6 +133,7 @@ class Program
             Console.WriteLine($"{fps} fps");
             DateNow = DateTime.Now;
         }
+        FormSetting.Refresh();
     }
 
     private static unsafe void OnResize(Vector2D<int> obj)
@@ -134,6 +149,7 @@ class Program
         Texture?.Dispose();
         Video?.Dispose();
         Gl?.Dispose();
+        FormSetting?.Dispose();
     }
 
     private static void KeyDown(IKeyboard arg1, Key arg2, int arg3)
@@ -142,20 +158,6 @@ class Program
         {
             window.Close();
         }
-        if (arg2 == Key.Right)
-        {
-            ImagePosition++;
-            ImagePosition = (ImagePosition + 3) % 3;
-        }
-        if (arg2 == Key.Left)
-        {
-            ImagePosition--;
-            ImagePosition = (ImagePosition + 3) % 3;
-        }
-        if (arg2 == Key.Space)
-        {
-            Video.IsNaNAbleKMeans = !Video.IsNaNAbleKMeans;
-        }
         if (arg2 == Key.S)
         {
             VideoStop = !VideoStop;
@@ -163,7 +165,6 @@ class Program
         if (arg2 == Key.N)
         {
             Video.NextFrame();
-            Video.BindAndApplyShader();
         }
     }
 }

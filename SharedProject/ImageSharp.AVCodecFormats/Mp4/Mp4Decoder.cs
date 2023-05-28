@@ -51,6 +51,9 @@ namespace HeyRed.ImageSharp.AVCodecFormats.Mp4
 
                 lastDecodedFrame = frame;
                 img.Frames.AddFrame(Image.LoadPixelData<TPixel>(lastDecodedFrame.Data, lastDecodedFrame.ImageSize.Width, lastDecodedFrame.ImageSize.Height).Frames[0]);
+
+                if(decodedFrames > 500)
+                    break;
             }
 
             return img;

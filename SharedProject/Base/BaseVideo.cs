@@ -10,10 +10,11 @@ using System.Threading.Tasks;
 using SharedProject.Interface;
 using Silk.NET.SDL;
 using Silk.NET.Vulkan.Video;
+using SharedProject.Interface.HaveAtributes;
 
 namespace SharedProject.Base
 {
-    public class BaseVideo<TTexture, TRenderTarget> : BaseGLClass, IVideo
+    public class BaseVideo<TTexture, TRenderTarget> : BaseGLClass, IVideo, IShaderAble, IRenderTargetAble, IKMeansAble
         where TRenderTarget : BaseGLClass, IRenderTarget
         where TTexture : BaseGLClass, ITexture
     {

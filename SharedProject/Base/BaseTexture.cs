@@ -139,7 +139,7 @@ namespace SharedProject.Base
             Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.LinearMipmapLinear);
             Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Linear);
             Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
-            Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 12);
+            Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 16);
         }
 
         public void Bind()

@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Emgu.CV.runtime.windows" Version="4.7.0.5276" />
+		<PackageReference Include="ImageSharp.AVCodecFormats" Version="3.0.8" />
+		<PackageReference Include="ImageSharp.AVCodecFormats.Native.win-x64" Version="1.6.0" />
+		<PackageReference Include="Silk.NET" Version="2.17.1" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="2.1.4" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\SharedProject\SharedProject.csproj" />
+	</ItemGroup>
+  <ItemGroup>
+    <Compile Update="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>

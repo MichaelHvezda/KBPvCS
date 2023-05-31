@@ -16,7 +16,7 @@ using Silk.NET.Windowing;
 using System.Xml;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
-namespace KBPUsWFvCS;
+namespace KBPEMGUvCS;
 
 static class Program
 {
@@ -67,7 +67,7 @@ static class Program
         DrawBufferr = new(Gl);
         Shader = new(Gl, "kmean");
         Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
-        Video = new(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba16f);
+        Video = new(Gl, ResourcesProvider.Video_HD, InternalFormat.Rgba16f);
 
         FormSetting = new Form1();
         FormSetting.Show();
@@ -129,12 +129,9 @@ static class Program
             //Console.WriteLine("BG image ID " + Video.GetBGTextureId(BlueH));
 
         }
-        if (Video.FramePosition == 0)
-        {
-            var fps = Video.FrameCount / (decimal)(DateTime.Now - DateNow).Seconds;
-            Console.WriteLine($"{fps} fps");
-            DateNow = DateTime.Now;
-        }
+        var tm = (DateTime.Now - DateNow).TotalSeconds;
+        var fps = Video.FramePosition / tm;
+        Console.WriteLine($"{Video.FramePosition} frame - {fps} fps");
         FormSetting.Refresh();
 
         //Console.WriteLine("render {0}", (time - DateTime.Now).TotalMilliseconds);

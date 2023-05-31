@@ -35,6 +35,7 @@ namespace KBPUsWFvCS
 
         public void NextFrame()
         {
+            //var time = DateTime.Now;
             FramePosition++;
             if (FrameCount <= FramePosition)
                 FramePosition = 0;
@@ -50,6 +51,7 @@ namespace KBPUsWFvCS
 
                 Texture = TTexture.Init(Gl, img, InternalFormat.Rgba8);
             }
+            //Console.WriteLine("texture creation {0}", (time - DateTime.Now).TotalMilliseconds);
         }
         public void GetFrame(int position)
         {

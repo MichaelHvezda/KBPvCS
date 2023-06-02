@@ -1,4 +1,5 @@
-﻿using SharedProject.Interface;
+﻿using SharedProject.Implementation;
+using SharedProject.Interface;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
 using System;
@@ -9,17 +10,16 @@ using System.Threading.Tasks;
 
 namespace SharedProject.Base
 {
-    public class BaseRenderTarget<TTexture> : BaseGLClass, IRenderTarget
-        where TTexture : BaseGLClass, ITexture
+    public abstract class BaseRenderTarget : BaseGLClass, IRenderTarget
     {
         public uint Handle { get; set; }
         public uint Height { get; set; }
         public uint Width { get; set; }
         public uint Count { get; set; }
-        public ITexture[] ColorBuffers { get; set; } = Array.Empty<TTexture>();
+        public ITexture[] ColorBuffers { get; set; } = Array.Empty<ITexture>();
         public GLEnum[] DrawBuffers { get; set; } = Array.Empty<GLEnum>();
 
-        public unsafe BaseRenderTarget(GL gl, uint Height, uint Width, uint Count,InternalFormat internalFormat) : base(gl)
+        public unsafe BaseRenderTarget(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat) : base(gl)
         {
             this.Init(Height, Width, Count, internalFormat);
         }
@@ -30,21 +30,19 @@ namespace SharedProject.Base
             this.Height = Height;
             this.Count = Count;
 
-            var ss = new float[Height * Width * 4];
-            for (int i = 0; i < ss.Length; i++)
-            {
-                ss[i] = 1f;
-            }
-            var pixel = new Span<float>(ss);
-            this.ColorBuffers = new TTexture[Count];
+            var pixel = new byte[Height * Width * 4];
+            this.ColorBuffers = new ITexture[Count];
             this.DrawBuffers = new GLEnum[Count];
-            for (int i = 0; i < Count; i++)
+            fixed (void* p = &pixel[0])
             {
-                this.ColorBuffers[i] = TTexture.Init(Gl,pixel, Width, Height, internalFormat);
-                this.ColorBuffers[i].Bind();
-                Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.Nearest);
-                Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Nearest);
-                DrawBuffers[i] = GLEnum.ColorAttachment0 + i;
+                for (int i = 0; i < Count; i++)
+                {
+                    this.ColorBuffers[i] = CreateTexture(Gl, p, Width, Height, internalFormat);
+                    this.ColorBuffers[i].Bind();
+                    Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.Nearest);
+                    Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Nearest);
+                    DrawBuffers[i] = GLEnum.ColorAttachment0 + i;
+                }
             }
 
             uint buffer;
@@ -60,10 +58,8 @@ namespace SharedProject.Base
                 throw new Exception("velké špatné");
         }
 
-        public static IRenderTarget Init(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat)
-        {
-            return new BaseRenderTarget<TTexture>(gl, Height, Width, Count, internalFormat);
-        }
+        internal unsafe abstract ITexture CreateTexture(GL gl, void* pixel, uint width, uint height, InternalFormat internalFormat);
+
 
         public void Bind(IWindow window)
         {
@@ -94,23 +90,6 @@ namespace SharedProject.Base
         public void DrawOnlyBuffers()
         {
             Gl.DrawBuffers(Count, DrawBuffers);
-        }
-        public float[,] RecalculateAndGetAvrColor()
-        {
-            float[,] kmeansCents = new float[Count, 3];
-            for (int i = 0; i < Count; i++)
-            {
-                this.ColorBuffers[i].RecalculateAvrColor();
-                //gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.Nearest);
-                //gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Nearest);
-                var large = this.ColorBuffers[i].Width * this.ColorBuffers[i].Height;
-                var sumVec = this.ColorBuffers[i].AvgColor * (int)large;
-
-                kmeansCents[i, 0] = sumVec.X / sumVec.W;
-                kmeansCents[i, 1] = sumVec.Y / sumVec.W;
-                kmeansCents[i, 2] = sumVec.Z / sumVec.W;
-            }
-            return kmeansCents;
         }
 
         public override void Dispose()

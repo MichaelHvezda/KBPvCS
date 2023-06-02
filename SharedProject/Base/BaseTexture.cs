@@ -9,10 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using SharedProject.Interface;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Collections.Specialized.BitVector32;
 
 namespace SharedProject.Base
 {
-    public class BaseTexture : BaseGLClass, ITexture
+    public abstract class BaseTexture : BaseGLClass, ITexture
     {
         public uint Handle { get; set; }
 
@@ -20,23 +21,15 @@ namespace SharedProject.Base
         public uint Width { get; set; }
         public int TotalMipmapLevels { get; set; }
         public Vector4D<float> AvgColor { get; set; } = new();
+        public PixelFormat PixelFormat { get; set; }
 
         public unsafe BaseTexture(GL gl, string path, InternalFormat internalFormat) : base(gl)
         {
-            this.Handle = this.Gl.GenTexture();
-            Bind();
-
             //Loading an image using imagesharp.
             using (var img = Image.Load<Rgba32>(path))
             {
-                //Reserve enough memory from the gpu for the whole image
-                //img.Mutate(p => p.Resize(img.Width / 8, img.Height / 8));
-                this.Gl.TexImage2D(TextureTarget.Texture2D, 0, internalFormat, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
 
-                Width = (uint)img.Width;
-                Height = (uint)img.Height;
-                this.CalculateTotalMipmapLevels();
-                img.ProcessPixelRows(accessor =>
+                Action ss = () => img.ProcessPixelRows(accessor =>
                 {
                     //ImageSharp 2 does not store images in contiguous memory by default, so we must send the image row by row
                     for (int y = 0; y < accessor.Height; y++)
@@ -48,23 +41,14 @@ namespace SharedProject.Base
                         }
                     }
                 });
+                CreateMain(null, (uint)img.Width, (uint)img.Height, internalFormat, action: ss);
             }
-            SetParameters();
-            RecalculateAvrColor();
         }
 
         public unsafe BaseTexture(GL gl, ImageFrame<Rgba32> img, InternalFormat internalFormat, bool disposeImg = false) : base(gl)
         {
-            this.Handle = this.Gl.GenTexture();
-            Bind();
             //Loading an image using imagesharp.
-
-            //Reserve enough memory from the gpu for the whole image
-            this.Gl.TexImage2D(TextureTarget.Texture2D, 0, (int)internalFormat, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
-            Width = (uint)img.Width;
-            Height = (uint)img.Height;
-            this.CalculateTotalMipmapLevels();
-            img.ProcessPixelRows(accessor =>
+            Action ss = () => img.ProcessPixelRows(accessor =>
             {
                 //ImageSharp 2 does not store images in contiguous memory by default, so we must send the image row by row
                 for (int y = 0; y < accessor.Height; y++)
@@ -76,34 +60,60 @@ namespace SharedProject.Base
                     }
                 }
             });
+            CreateMain(null, (uint)img.Width, (uint)img.Height, internalFormat, action: ss);
+
+            //Reserve enough memory from the gpu for the whole image
 
             if (disposeImg)
                 img.Dispose();
 
-            SetParameters();
-            RecalculateAvrColor();
         }
 
-        public unsafe BaseTexture(GL gl, Span<float> data, uint width, uint height, InternalFormat internalFormat) : base(gl)
+        public unsafe BaseTexture(GL gl, void* data, uint width, uint height, InternalFormat internalFormat, PixelFormat pixelFormat = PixelFormat.Rgba, Action action = null!) : base(gl)
         {
-            //Saving the gl instance.
-            this.Width = width;
-            this.Height = height;
+            //We want the ability to create a texture using data generated from code aswell.
 
-            this.CalculateTotalMipmapLevels();
+            //Setting the data of a texture.
+            //this.gl.TexImage2D(TextureTarget.Texture2D, 0, (int)InternalFormat.Rgba16f, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, d);
+
+            CreateMain(data, width, height, internalFormat, pixelFormat, action);
+        }
+        public unsafe void RecalculateAvrColor()
+        {
+            Bind();
+            Gl.GenerateMipmap(TextureTarget.Texture2D);
+            var pixel = new float[4];
+            fixed (void* p = &pixel[0])
+            {
+                Gl.GetTexImage(TextureTarget.Texture2D, TotalMipmapLevels - 1, PixelFormat.Rgba, PixelType.Float, p);
+                AvgColor = new Vector4D<float>() { X = pixel[0], Y = pixel[1], Z = pixel[2], W = pixel[3] };
+
+            }
+        }
+        private void CalculateTotalMipmapLevels()
+        {
+            this.TotalMipmapLevels = (int)(1 + Math.Floor(Math.Log2(Math.Max(Width, Height))));
+        }
+
+        public virtual unsafe void CreateMain(void* data, uint width, uint height, InternalFormat internalFormat, PixelFormat pixelFormat = PixelFormat.Rgba, Action action = null!)
+        {
             //Generating the opengl Handle;
             Handle = this.Gl.GenTexture();
             Bind();
+            this.Width = width;
+            this.Height = height;
+            this.PixelFormat = pixelFormat;
+            this.CalculateTotalMipmapLevels();
+            this.Gl.TexImage2D(TextureTarget.Texture2D, 0, (int)internalFormat, width, height, 0, pixelFormat, PixelType.UnsignedByte, data);
 
-            //We want the ability to create a texture using data generated from code aswell.
-            fixed (void* d = &data[0])
-            {
-                //Setting the data of a texture.
-                //this.gl.TexImage2D(TextureTarget.Texture2D, 0, (int)InternalFormat.Rgba16f, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, d);
-                this.Gl.TexImage2D(TextureTarget.Texture2D, 0, (int)internalFormat, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, d);
-            }
+            action?.Invoke();
             SetParameters();
             RecalculateAvrColor();
+        }
+        public unsafe void ChangeContent(void* data)
+        {
+            Bind();
+            this.Gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, Width, Height, PixelFormat, PixelType.UnsignedByte, data);
         }
 
         public void Bind(TextureUnit textureSlot)
@@ -119,19 +129,8 @@ namespace SharedProject.Base
             Gl.DeleteTexture(Handle);
             base.Dispose();
         }
-        public unsafe void RecalculateAvrColor()
-        {
-            Bind();
-            Gl.GenerateMipmap(TextureTarget.Texture2D);
-            var pixel = new float[4];
-            fixed (void* p = &pixel[0])
-            {
-                Gl.GetTexImage(TextureTarget.Texture2D, TotalMipmapLevels - 1, PixelFormat.Rgba, PixelType.Float, p);
-                AvgColor = new Vector4D<float>() { X = pixel[0], Y = pixel[1], Z = pixel[2], W = pixel[3] };
 
-            }
-        }
-        private void SetParameters()
+        internal virtual void SetParameters()
         {
             //Setting some texture perameters so the texture behaves as expected.
             Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)GLEnum.ClampToEdge);
@@ -153,21 +152,6 @@ namespace SharedProject.Base
         {
             Gl.ActiveTexture(TextureUnit.Texture0);
             Gl.BindTexture(TextureTarget.Texture2D, 0);
-        }
-
-        private void CalculateTotalMipmapLevels()
-        {
-            this.TotalMipmapLevels = (int)(1 + Math.Floor(Math.Log2(Math.Max(Width, Height))));
-        }
-
-        public static ITexture Init(GL gl, Span<float> data, uint width, uint height, InternalFormat internalFormat)
-        {
-            return new BaseTexture(gl, data, width, height, internalFormat);
-        }
-
-        public static ITexture Init(GL gl, ImageFrame<Rgba32> img, InternalFormat internalFormat, bool disposeImg = false)
-        {
-            return new BaseTexture(gl, img, internalFormat, disposeImg);
         }
     }
 }

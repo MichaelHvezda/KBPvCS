@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using SharedProject.Base;
+using SharedProject.Implementation;
 using SharedProject.Interface;
 using SharedResProject;
 using Silk.NET.Input;
@@ -24,7 +25,7 @@ namespace KBPvCS
         private static SharedResProject.Shader Shader;
         private static DrawBuffer DrawBufferr;
         private static ITexture Texture;
-        private static IVideo Video;
+        private static AvrSLVideo Video;
 
         public static int FramePosition { get; set; } = 0;
         public static int ImagePosition { get; set; } = 0;
@@ -56,9 +57,9 @@ namespace KBPvCS
 
             //Instantiating our new abstractions
             DrawBufferr = new(Gl);
-            Shader = new (Gl, "kmean");
-            Texture = new BaseTexture(Gl, ResourcesProvider.Back, InternalFormat.Rgba8);
-            Video = new BaseVideo<BaseTexture, BaseRenderTarget<BaseTexture>>(Gl, ResourcesProvider.Video3, InternalFormat.Rgba8);
+            Shader = new(Gl, "kmean");
+            Texture = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Back, InternalFormat.Rgba8);
+            Video = new SharedProject.Implementation.AvrSLVideo(Gl, ResourcesProvider.Video3, InternalFormat.Rgba8, 3);
 
             Console.WriteLine("res loaded");
             DateNow = DateTime.Now;

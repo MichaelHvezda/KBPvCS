@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using SharedProject.Base;
+using SharedProject.Implementation;
 using SharedProject.Interface;
 using SharedResProject;
 using Silk.NET.Input;
@@ -32,20 +33,22 @@ namespace PPBvCS
             options.Size = new Vector2D<int>(800, 600);
             options.Title = "LearnOpenGL with Silk.NET";
             window = Silk.NET.Windowing.Window.Create(options);
-            window.Load += OnLoad;
-            window.Closing += OnClose;
 
+            window.IsVisible =false;
+            window.Initialize();
+            OnLoad();
+            OnClose();
             window.Run();
         }
 
         private static unsafe void OnLoad()
         {
             Gl = GL.GetApi(window);
-            Texture = new BaseTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba8);
-            Texture1 = new BaseTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16);
-            Texture2 = new BaseTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16f);
-            Texture3 = new BaseTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba32f);
-            Texture4 = new BaseTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba4);
+            Texture =  new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba8);
+            Texture1 = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16);
+            Texture2 = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16f);
+            Texture3 = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba32f);
+            Texture4 = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba4);
 
             using var image = Image.Load<Rgba32>(ResourcesProvider.Big);
 

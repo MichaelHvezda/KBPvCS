@@ -1,5 +1,6 @@
 ﻿using SharedProject.Base;
 using SharedProject.Interface.Atomic;
+using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -112,6 +113,15 @@ namespace SharedResProject
                 throw new Exception($"{name} uniform not found on shader.");
             }
             Gl.Uniform4(location, val1, val2, val3, val4);
+        }
+        public void SetUniformVec3(string name, Vector3D<float> vector3D)
+        {
+            int location = Gl.GetUniformLocation(Handle, name);
+            if (location == -1)
+            {
+                throw new Exception($"{name} uniform not found on shader.");
+            }
+            Gl.Uniform3(location, vector3D.X, vector3D.Y, vector3D.Z);
         }
 
         public override void Dispose()

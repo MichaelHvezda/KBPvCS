@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Silk.NET.Maths;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace SharedProject.Interface.HaveAtributes
 {
     public interface IKMeansAble
     {
-        float[,] KMeans { get; set; }
+        Vector3D<float>[] KMeans { get; set; }
         bool IsNaNAbleKMeans { get; set; }
     }
 }

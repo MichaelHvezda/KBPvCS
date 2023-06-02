@@ -27,8 +27,8 @@ static class Program
 
     private static SharedResProject.Shader Shader;
     private static DrawBuffer DrawBufferr;
-    private static BaseTexture Texture;
-    private static Video Video;
+    private static SharedProject.Implementation.Texture Texture;
+    private static SharedProject.Implementation.EMGUVideo Video;
     private static Form FormSetting;
     public static bool VideoStop { get; set; }
 
@@ -67,7 +67,7 @@ static class Program
         DrawBufferr = new(Gl);
         Shader = new(Gl, "kmean");
         Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
-        Video = new(Gl, ResourcesProvider.Video_HD, InternalFormat.Rgba16f);
+        Video = new(Gl, ResourcesProvider.Video_HD, InternalFormat.Rgba8,0);
 
         FormSetting = new Form1();
         FormSetting.Show();

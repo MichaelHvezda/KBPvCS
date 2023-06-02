@@ -12,6 +12,5 @@ namespace SharedProject.Interface
         ITexture Texture { get; set; }
         int FramePosition { get; set; }
         void NextFrame();
-        static abstract IVideo Init(GL gl, string path, InternalFormat internalFormat);
     }
 }

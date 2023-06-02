@@ -1,4 +1,5 @@
 ﻿using SharedProject.Base;
+using SharedProject.Implementation;
 using SharedProject.Interface;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
@@ -10,14 +11,11 @@ using System.Threading.Tasks;
 
 namespace KBPUvCS
 {
-    public class Video<TTexture, TRenderTarget> : BaseVideo<TTexture, TRenderTarget>
-        where TRenderTarget : BaseGLClass, IRenderTarget
-        where TTexture : BaseGLClass, ITexture
+    public class Video : AvrSLVideo
     {
-        public Video(GL gl, string path, InternalFormat internalFormat) : base(gl, path, internalFormat)
+        public Video(GL gl, string path, InternalFormat internalFormat, uint renderTargetSize) : base(gl, path, internalFormat, renderTargetSize)
         {
         }
-
 
         public uint BGTextureId { get; set; } = 0;
 
@@ -25,17 +23,12 @@ namespace KBPUvCS
         {
             List<(float, uint)> values = new()
             {
-                (base.KMeans[0, 2] - bgVal, 0),
-                (base.KMeans[1, 2] - bgVal, 1),
-                (base.KMeans[2, 2] - bgVal, 2)
+                (base.KMeans[0][2] - bgVal, 0),
+                (base.KMeans[1][2] - bgVal, 1),
+                (base.KMeans[2][2] - bgVal, 2)
             };
 
             return values.OrderByDescending(p => p.Item1).First().Item2;
-        }
-
-        public static new IVideo Init(GL gl, string path, InternalFormat internalFormat)
-        {
-            return new Video<TTexture, TRenderTarget>(gl, path, internalFormat);
         }
     }
 }

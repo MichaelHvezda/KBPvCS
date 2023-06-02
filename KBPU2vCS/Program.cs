@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using SharedProject.Base;
+using SharedProject.Implementation;
 using SharedProject.Interface;
 using SharedResProject;
 using Silk.NET.Input;
@@ -22,7 +23,7 @@ class Program
 
     private static SharedResProject.Shader Shader;
     private static DrawBuffer DrawBufferr;
-    private static BaseTexture Texture;
+    private static ITexture Texture;
     private static Video Video;
 
     public static int FramePosition { get; set; } = 0;
@@ -63,9 +64,8 @@ class Program
         //Instantiating our new abstractions
         DrawBufferr = new(Gl);
         Shader = new(Gl, "kmean");
-        Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
-        Video = new(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba16f);
-        Video.KMeans = new float[3, 3] { { 0.7f, 0.2f, 0.5f }, { 1f, 0.5f, 0.7f }, { 0.5f, 0.7f, 0.2f } };
+        Texture = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
+        Video = new Video(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba16f, 3);
 
         Console.WriteLine("res loaded");
         DateNow = DateTime.Now;
@@ -87,7 +87,6 @@ class Program
 
         //Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
         //Shader.SetUniform("uTexture2", 2);
-
         Video.RenderTarget.ColorBuffers[Video.GetBGTextureId(BlueH)].Bind(TextureUnit.Texture2);
         Shader.SetUniform("uTexture2", 2);
 
@@ -95,17 +94,14 @@ class Program
 
         if (!VideoStop)
         {
-            //for (var x = 0; x < 3; x++)
-            //{
-            //    Console.Write("{");
-            //    for (var y = 0; y < 3; y++)
-            //    {
-            //        Console.Write(Video.KMeans[x, y] + " ");
-            //    }
+            for (var x = 0; x < 3; x++)
+            {
+                Console.Write("{");
+                Console.Write(Video.KMeans[x] + " ");
 
-            //    Console.Write("}, ");
-            //}
-            //Console.WriteLine();
+                Console.Write("}, ");
+            }
+            Console.WriteLine();
 
             Video.NextFrame();
             Video.BindAndApplyShader();

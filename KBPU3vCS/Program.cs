@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using SharedProject.Base;
+using SharedProject.Implementation;
 using SharedProject.Interface;
 using SharedResProject;
 using Silk.NET.Input;
@@ -22,7 +23,7 @@ class Program
 
     private static SharedResProject.Shader Shader;
     private static DrawBuffer DrawBufferr;
-    private static BaseTexture Texture;
+    private static SharedProject.Implementation.Texture Texture;
     private static Video Video;
 
     public static int FramePosition { get; set; } = 0;
@@ -65,7 +66,12 @@ class Program
         Shader = new(Gl, "kmean");
         Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
         Video = new(Gl, ResourcesProvider.Video3, InternalFormat.Rgba16f, 4);
-        Video.KMeans = new float[4, 3] { { 0.7f, 0.2f, 0.5f }, { 1f, 0.5f, 0.7f }, { 0.4f, 0.7f, 0.2f }, { BlueH, 0.0f, 0.0f } };
+        Video.KMeans = new[]{
+            new Vector3D<float>( 0.7f, 0.2f, 0.5f  ),
+            new Vector3D<float>( 1f, 0.5f, 0.7f    ),
+            new Vector3D<float>( 0.4f, 0.7f, 0.2f  ),
+            new Vector3D<float>( BlueH, 0.0f, 0.0f )
+        };
 
         Console.WriteLine("res loaded");
         DateNow = DateTime.Now;
@@ -98,10 +104,7 @@ class Program
             for (var x = 0; x < 4; x++)
             {
                 Console.Write("{");
-                for (var y = 0; y < 3; y++)
-                {
-                    Console.Write(Video.KMeans[x, y] + " ");
-                }
+                Console.Write(Video.KMeans[x] + " ");
 
                 Console.Write("}, ");
             }
@@ -109,7 +112,7 @@ class Program
 
             Video.NextFrame();
             Video.BindAndApplyShader();
-            Console.WriteLine(Video.FramePosition);
+            //Console.WriteLine(Video.FramePosition);
 
         }
         if (Video.FramePosition == 0)

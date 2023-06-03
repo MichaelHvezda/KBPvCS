@@ -31,6 +31,7 @@ class Program
     public static bool VideoStop { get; set; }
 
     public static DateTime DateNow { get; set; }
+    public static uint BGId { get; set; } = 0;
 
 
     private static readonly float GreenH = 95 / 360f;
@@ -64,14 +65,15 @@ class Program
         //Instantiating our new abstractions
         DrawBufferr = new(Gl);
         Shader = new(Gl, "kmean");
-        Texture = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
-        Video = new Video(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba16f, 3);
+        Texture = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Back, InternalFormat.Rgba8);
+        Video = new Video(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba8, 3);
 
         Console.WriteLine("res loaded");
         DateNow = DateTime.Now;
     }
     private static unsafe void OnRender(double obj)
     {
+        //var time = DateTime.Now;
         Gl.Clear(ClearBufferMask.ColorBufferBit);
 
         DrawBufferr.Bind();
@@ -87,12 +89,13 @@ class Program
 
         //Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
         //Shader.SetUniform("uTexture2", 2);
-        Video.RenderTarget.ColorBuffers[Video.GetBGTextureId(BlueH)].Bind(TextureUnit.Texture2);
+        var videoTexturePosition = Video.GetBGTextureId(BlueH);
+        Video.RenderTarget.ColorBuffers[videoTexturePosition].Bind(TextureUnit.Texture2);
         Shader.SetUniform("uTexture2", 2);
 
         Gl.DrawElements(PrimitiveType.Triangles, (uint)DrawBuffer.Indices.Length, DrawElementsType.UnsignedInt, null);
 
-        if (!VideoStop)
+        if (videoTexturePosition != BGId)
         {
             for (var x = 0; x < 3; x++)
             {
@@ -102,16 +105,33 @@ class Program
                 Console.Write("}, ");
             }
             Console.WriteLine();
+            Console.WriteLine(videoTexturePosition);
+        }
+        BGId = videoTexturePosition;
 
+        if (!VideoStop)
+        {
+            //for (var x = 0; x < 3; x++)
+            //{
+            //    Console.Write("{");
+            //    Console.Write(Video.KMeans[x] + " ");
+
+            //    Console.Write("}, ");
+            //}
+            //Console.WriteLine();
+
+            //Console.WriteLine("render {0}", (time - DateTime.Now).TotalMilliseconds);
             Video.NextFrame();
+            //Console.WriteLine("next {0}", (time - DateTime.Now).TotalMilliseconds);
             Video.BindAndApplyShader();
+            //Console.WriteLine("shader {0}", (time - DateTime.Now).TotalMilliseconds);
             //Console.WriteLine(Video.FramePosition);
             //Console.WriteLine("BG image ID " + Video.GetBGTextureId(BlueH));
 
         }
         if (Video.FramePosition == 0)
         {
-            var fps = Video.FrameCount / (decimal)(DateTime.Now - DateNow).Seconds;
+            var fps = (decimal)396 / (decimal)(DateTime.Now - DateNow).Seconds;
             Console.WriteLine($"{fps} fps");
             DateNow = DateTime.Now;
         }

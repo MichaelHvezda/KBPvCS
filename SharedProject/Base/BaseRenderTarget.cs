@@ -15,7 +15,7 @@ namespace SharedProject.Base
         public uint Handle { get; set; }
         public uint Height { get; set; }
         public uint Width { get; set; }
-        public uint Count { get; set; }
+        public uint Count { get; private set; }
         public ITexture[] ColorBuffers { get; set; } = Array.Empty<ITexture>();
         public GLEnum[] DrawBuffers { get; set; } = Array.Empty<GLEnum>();
 

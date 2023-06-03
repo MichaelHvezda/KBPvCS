@@ -23,7 +23,7 @@ namespace SharedProject.Implementation
         {
         }
 
-        public unsafe Texture(GL gl, void* data, uint width, uint height, InternalFormat internalFormat, PixelFormat pixelFormat = PixelFormat.Rgba, Action action = null) : base(gl, data, width, height, internalFormat, pixelFormat, action)
+        public unsafe Texture(GL gl, void* data, uint width, uint height, InternalFormat internalFormat, PixelFormat pixelFormat = PixelFormat.Rgba, Action action = null!) : base(gl, data, width, height, internalFormat, pixelFormat, action)
         {
         }
     }

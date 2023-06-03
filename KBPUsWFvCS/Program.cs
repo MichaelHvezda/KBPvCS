@@ -15,6 +15,7 @@ using Silk.NET.SDL;
 using Silk.NET.Windowing;
 using System.Xml;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using SharedProject.Implementation;
 
 namespace KBPUsWFvCS;
 
@@ -27,8 +28,8 @@ static class Program
 
     private static SharedResProject.Shader Shader;
     private static DrawBuffer DrawBufferr;
-    private static BaseTexture Texture;
-    private static Video Video;
+    private static SharedProject.Implementation.Texture Texture;
+    private static SLVideo Video;
     private static Form FormSetting;
     public static bool VideoStop { get; set; }
 
@@ -67,7 +68,7 @@ static class Program
         DrawBufferr = new(Gl);
         Shader = new(Gl, "kmean");
         Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
-        Video = new(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba16f);
+        Video = new(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba8, 3);
 
         FormSetting = new Form1();
         FormSetting.Show();
@@ -92,7 +93,7 @@ static class Program
 
         Shader.Use();
 
-        Gl.Viewport(0, 0, Video.Texture.Width, Video.Texture.Height);
+        Gl.Viewport(window.Size);
         //Bind a texture and and set the uTexture0 to use texture0.
 
         Video.Texture.Bind(TextureUnit.Texture0);
@@ -131,7 +132,7 @@ static class Program
         }
         if (Video.FramePosition == 0)
         {
-            var fps = Video.FrameCount / (decimal)(DateTime.Now - DateNow).Seconds;
+            var fps = 396 / (decimal)(DateTime.Now - DateNow).Seconds;
             Console.WriteLine($"{fps} fps");
             DateNow = DateTime.Now;
         }

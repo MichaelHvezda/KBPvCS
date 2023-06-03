@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KBPU2vCS;
 
-public class Video : AvrSLVideo
+public class Video : AvgEMGUVideo
 {
     public Video(GL gl, string path, InternalFormat internalFormat, uint renderTargetSize) : base(gl, path, internalFormat, renderTargetSize)
     {
@@ -23,11 +23,11 @@ public class Video : AvrSLVideo
     {
         List<(float, uint)> values = new()
             {
-                (base.KMeans[0][2] - bgVal, 0),
-                (base.KMeans[1][2] - bgVal, 1),
-                (base.KMeans[2][2] - bgVal, 2)
+                (Math.Abs(base.KMeans[0][0] - bgVal), 0),
+                (Math.Abs(base.KMeans[1][0] - bgVal), 1),
+                (Math.Abs(base.KMeans[2][0] - bgVal), 2)
             };
 
-        return values.OrderByDescending(p => p.Item1).First().Item2;
+        return values.OrderBy(p => p.Item1).First().Item2;
     }
 }

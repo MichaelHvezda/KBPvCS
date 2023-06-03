@@ -22,6 +22,7 @@ namespace SharedProject.Base
         public int TotalMipmapLevels { get; set; }
         public Vector4D<float> AvgColor { get; set; } = new();
         public PixelFormat PixelFormat { get; set; }
+        public InternalFormat InternalFormat { get; set; }
 
         public unsafe BaseTexture(GL gl, string path, InternalFormat internalFormat) : base(gl)
         {
@@ -90,6 +91,7 @@ namespace SharedProject.Base
 
             }
         }
+
         private void CalculateTotalMipmapLevels()
         {
             this.TotalMipmapLevels = (int)(1 + Math.Floor(Math.Log2(Math.Max(Width, Height))));
@@ -103,6 +105,7 @@ namespace SharedProject.Base
             this.Width = width;
             this.Height = height;
             this.PixelFormat = pixelFormat;
+            this.InternalFormat = InternalFormat;
             this.CalculateTotalMipmapLevels();
             this.Gl.TexImage2D(TextureTarget.Texture2D, 0, (int)internalFormat, width, height, 0, pixelFormat, PixelType.UnsignedByte, data);
 

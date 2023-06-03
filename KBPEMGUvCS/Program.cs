@@ -67,7 +67,7 @@ static class Program
         DrawBufferr = new(Gl);
         Shader = new(Gl, "kmean");
         Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
-        Video = new(Gl, ResourcesProvider.Video_HD, InternalFormat.Rgba8,0);
+        Video = new(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba8,0);
 
         FormSetting = new Form1();
         FormSetting.Show();
@@ -129,9 +129,12 @@ static class Program
             //Console.WriteLine("BG image ID " + Video.GetBGTextureId(BlueH));
 
         }
-        var tm = (DateTime.Now - DateNow).TotalSeconds;
-        var fps = Video.FramePosition / tm;
-        Console.WriteLine($"{Video.FramePosition} frame - {fps} fps");
+        if (Video.FramePosition == 0)
+        {
+            var fps = 396 / (decimal)(DateTime.Now - DateNow).Seconds;
+            Console.WriteLine($"{fps} fps");
+            DateNow = DateTime.Now;
+        }
         FormSetting.Refresh();
 
         //Console.WriteLine("render {0}", (time - DateTime.Now).TotalMilliseconds);

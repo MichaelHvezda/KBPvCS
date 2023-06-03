@@ -17,14 +17,11 @@ namespace SharedProject.Base
 {
     public abstract class BaseVideo : BaseGLClass, IVideo
     {
-        public DrawBuffer DrawBuffer { get; } = default!;
         public ITexture Texture { get; set; } = default!;
-        public bool IsNaNAbleKMeans { get; set; } = true;
         public InternalFormat InternalFormat { get; } = default!;
         public int FramePosition { get; set; } = 0;
         public BaseVideo(GL gl, string path, InternalFormat internalFormat,uint renderTargetSize) : base(gl)
         {
-            DrawBuffer = new DrawBuffer(Gl);
             InternalFormat = internalFormat;
             Init(path, internalFormat, renderTargetSize);
         }
@@ -33,7 +30,6 @@ namespace SharedProject.Base
         public override void Dispose()
         {
             Texture?.Dispose();
-            DrawBuffer?.Dispose();
 
             base.Dispose();
         }

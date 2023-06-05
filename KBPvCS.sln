@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KBPUsWFvCS", "KBPUsWFvCS\KB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KBPEMGUvCS", "KBPEMGUvCS\KBPEMGUvCS.csproj", "{6CF41E3E-3D2C-42E8-9112-7CB3659A0BF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KZBU2EMGUvCS", "KZBU2EMGUvCS\KZBU2EMGUvCS.csproj", "{333E3008-5F6D-439F-9193-B681A8F61061}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{6CF41E3E-3D2C-42E8-9112-7CB3659A0BF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CF41E3E-3D2C-42E8-9112-7CB3659A0BF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CF41E3E-3D2C-42E8-9112-7CB3659A0BF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{333E3008-5F6D-439F-9193-B681A8F61061}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{333E3008-5F6D-439F-9193-B681A8F61061}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{333E3008-5F6D-439F-9193-B681A8F61061}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{333E3008-5F6D-439F-9193-B681A8F61061}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

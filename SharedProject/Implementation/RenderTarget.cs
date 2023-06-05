@@ -28,6 +28,10 @@ namespace SharedProject.Implementation
         public AvrRenderTarget(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat) : base(gl, Height, Width, Count, internalFormat)
         {
         }
+        internal unsafe override ITexture CreateTexture(GL gl, void* pixel, uint width, uint height, InternalFormat internalFormat)
+        {
+            return new AvgTexture(gl, pixel, width, height, internalFormat);
+        }
         public Vector3D<float>[] RecalculateAndGetAvrColor()
         {
             Vector3D<float>[] kmeansCents = new Vector3D<float>[Count];

@@ -79,23 +79,6 @@ namespace SharedProject.Base
 
             CreateMain(data, width, height, internalFormat, pixelFormat, action);
         }
-        public unsafe void RecalculateAvrColor()
-        {
-            Bind();
-            Gl.GenerateMipmap(TextureTarget.Texture2D);
-            var pixel = new float[4];
-            fixed (void* p = &pixel[0])
-            {
-                Gl.GetTexImage(TextureTarget.Texture2D, TotalMipmapLevels - 1, PixelFormat.Rgba, PixelType.Float, p);
-                AvgColor = new Vector4D<float>() { X = pixel[0], Y = pixel[1], Z = pixel[2], W = pixel[3] };
-
-            }
-        }
-
-        private void CalculateTotalMipmapLevels()
-        {
-            this.TotalMipmapLevels = (int)(1 + Math.Floor(Math.Log2(Math.Max(Width, Height))));
-        }
 
         public virtual unsafe void CreateMain(void* data, uint width, uint height, InternalFormat internalFormat, PixelFormat pixelFormat = PixelFormat.Rgba, Action action = null!)
         {
@@ -106,17 +89,33 @@ namespace SharedProject.Base
             this.Height = height;
             this.PixelFormat = pixelFormat;
             this.InternalFormat = InternalFormat;
-            this.CalculateTotalMipmapLevels();
             this.Gl.TexImage2D(TextureTarget.Texture2D, 0, (int)internalFormat, width, height, 0, pixelFormat, PixelType.UnsignedByte, data);
 
             action?.Invoke();
             SetParameters();
-            RecalculateAvrColor();
         }
         public unsafe void ChangeContent(void* data)
         {
             Bind();
             this.Gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, Width, Height, PixelFormat, PixelType.UnsignedByte, data);
+        }
+
+        public unsafe void ChangeContent(ImageFrame<Rgba32> img)
+        {
+            Bind();
+            img.ProcessPixelRows(accessor =>
+            {
+                //ImageSharp 2 does not store images in contiguous memory by default, so we must send the image row by row
+                for (int y = 0; y < accessor.Height; y++)
+                {
+                    fixed (void* data = accessor.GetRowSpan(y))
+                    {
+                        //Loading the actual image.
+                        this.Gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, y, (uint)accessor.Width, 1, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+                    }
+                }
+            }
+            );
         }
 
         public void Bind(TextureUnit textureSlot)
@@ -133,17 +132,6 @@ namespace SharedProject.Base
             base.Dispose();
         }
 
-        internal virtual void SetParameters()
-        {
-            //Setting some texture perameters so the texture behaves as expected.
-            Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)GLEnum.ClampToEdge);
-            Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)GLEnum.ClampToEdge);
-            Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.LinearMipmapLinear);
-            Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Linear);
-            Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
-            Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMaxLevel, 16);
-        }
-
         public void Bind()
         {
             //When we bind a texture we can choose which textureslot we can bind it to.
@@ -156,5 +144,8 @@ namespace SharedProject.Base
             Gl.ActiveTexture(TextureUnit.Texture0);
             Gl.BindTexture(TextureTarget.Texture2D, 0);
         }
+        internal abstract void CalculateTotalMipmapLevels();
+        public abstract void RecalculateAvrColor();
+        internal abstract void SetParameters();
     }
 }

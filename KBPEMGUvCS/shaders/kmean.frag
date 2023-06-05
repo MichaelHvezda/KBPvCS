@@ -45,9 +45,9 @@ float MaxnIsZero(float maxn, float minn){
 }
 
 vec3 RgbToHsb(vec3 a){
-	float r = (a.r);
+	float r = (a.b);
 	float g = (a.g);
-	float b = (a.b);
+	float b = (a.r);
 
 	float maxn = max(r, max(g, b));
 	float minn = min(r, min(g, b));
@@ -92,7 +92,7 @@ void main()
     if(keyDistance < Hue && hsb.y > Saturation && hsb.z > Brightness){
         FragColor = b;
     }else{
-        FragColor = a;
+        FragColor = vec4(a.b,a.g,a.r,a.a);
     }
 
 

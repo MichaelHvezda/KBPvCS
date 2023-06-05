@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KBPU2vCS;
 
-public class Video : AvgEMGUVideo
+public class Video :  AvrSLVideo //AvgEMGUVideo
 {
     public Video(GL gl, string path, InternalFormat internalFormat, uint renderTargetSize) : base(gl, path, internalFormat, renderTargetSize)
     {

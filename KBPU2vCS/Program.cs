@@ -66,7 +66,7 @@ class Program
         DrawBufferr = new(Gl);
         Shader = new(Gl, "kmean");
         Texture = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Back, InternalFormat.Rgba8);
-        Video = new Video(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba8, 3);
+        Video = new Video(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba4, 3);
 
         Console.WriteLine("res loaded");
         DateNow = DateTime.Now;
@@ -81,6 +81,7 @@ class Program
         Shader.Use();
         //Bind a texture and and set the uTexture0 to use texture0.
 
+        Gl.Viewport(window.Size);
         Video.Texture.Bind(TextureUnit.Texture0);
         Shader.SetUniform("uTexture0", 0);
 
@@ -131,8 +132,8 @@ class Program
         }
         if (Video.FramePosition == 0)
         {
-            var fps = (decimal)396 / (decimal)(DateTime.Now - DateNow).Seconds;
-            Console.WriteLine($"{fps} fps");
+            var fps = (double)396 / (double)((DateTime.Now - DateNow).TotalMilliseconds / 1000d);
+            Console.WriteLine("{0} fps {1} time", fps, (decimal)(DateTime.Now - DateNow).TotalMilliseconds);
             DateNow = DateTime.Now;
         }
     }

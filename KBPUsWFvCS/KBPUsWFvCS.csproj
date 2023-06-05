@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
     <PackageReference Include="ImageSharp.AVCodecFormats" Version="3.0.8" />
     <PackageReference Include="ImageSharp.AVCodecFormats.Native.win-x64" Version="1.6.0" />
     <PackageReference Include="Silk.NET" Version="2.17.1" />

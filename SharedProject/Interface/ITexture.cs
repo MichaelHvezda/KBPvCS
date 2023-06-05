@@ -17,6 +17,7 @@ namespace SharedProject.Interface
     {
         void Bind(TextureUnit textureSlot);
         unsafe void ChangeContent(void* data);
+        unsafe void ChangeContent(ImageFrame<Rgba32> img);
         int TotalMipmapLevels { get; set; }
     }
 }

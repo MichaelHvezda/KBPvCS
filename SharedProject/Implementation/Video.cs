@@ -49,12 +49,12 @@ namespace SharedProject.Implementation
 
             if (img.PixelBuffer is not null)
             {
-                if (Texture is not null)
+                if (Texture is null)
                 {
-                    Texture.Dispose();
+                    Texture = CreateTexture(Gl, img, InternalFormat.Rgba8);
                 }
 
-                Texture = CreateTexture(Gl, img, InternalFormat.Rgba8);
+                Texture.ChangeContent(img);
             }
         }
 
@@ -83,8 +83,9 @@ namespace SharedProject.Implementation
 
         internal unsafe virtual ITexture CreateTexture(GL gl, void* data, uint width, uint height, InternalFormat internalFormat)
         {
-            return new Texture(gl, data, width, height, internalFormat, Silk.NET.OpenGL.PixelFormat.Bgr);
+            return new Texture(gl, data, width, height, internalFormat, Silk.NET.OpenGL.PixelFormat.Rgb);
         }
+
         private unsafe void LoadFrame()
         {
             //var time = DateTime.Now;
@@ -97,17 +98,30 @@ namespace SharedProject.Implementation
                 {
                     //Console.WriteLine("texture cscd {0}", (time - DateTime.Now).TotalMilliseconds);
                     Texture = CreateTexture(Gl, mat.DataPointer.ToPointer(), (uint)mat.Width, (uint)mat.Height, InternalFormat);
-
+                    return;
                 }
 
                 //Console.WriteLine("texture readed {0}", (time - DateTime.Now).TotalMilliseconds);
 
                 Texture.ChangeContent(mat.DataPointer.ToPointer());
+                //Console.WriteLine("texture creation {0}", (time - DateTime.Now).TotalMilliseconds);
                 return;
             }
-            VideoData.Dispose();
-            VideoData = new VideoCapture(filePath);
             FramePosition = 0;
+            VideoData.Set(CapProp.PosFrames, FramePosition);
+            if (VideoData.Read(mat))
+            {
+                Texture.ChangeContent(mat.DataPointer.ToPointer());
+            }
+
+
+
+            //var time = DateTime.Now;
+            //VideoData.Dispose();
+            //Console.WriteLine("dispose {0}", (time - DateTime.Now).TotalMilliseconds);
+            //VideoData = new VideoCapture(filePath);
+            //Console.WriteLine("create {0}", (time - DateTime.Now).TotalMilliseconds);
+
             //VideoData.Stop();
 
             //Console.WriteLine("texture creation {0}", (time - DateTime.Now).TotalMilliseconds);
@@ -128,7 +142,7 @@ namespace SharedProject.Implementation
 
     public class AvrSLVideo : SLVideo, IKMeansAble, IShaderAble
     {
-        public Vector3D<float>[] KMeans { get; set; } = new Vector3D<float>[3] { new Vector3D<float>(0.7f, 0.2f, 0.5f), new Vector3D<float>(1f, 0.5f, 0.7f), new Vector3D<float>(0.5f, 0.7f, 0.2f) };
+        public Vector3D<float>[] KMeans { get; set; }
         public SharedResProject.Shader Shader { get; set; }
         public virtual AvrRenderTarget RenderTarget { get; set; }
         public DrawBuffer DrawBuffer { get; set; } = default!;
@@ -136,6 +150,7 @@ namespace SharedProject.Implementation
 
         public AvrSLVideo(GL gl, string path, InternalFormat internalFormat, uint renderTargetSize) : base(gl, path, internalFormat, renderTargetSize)
         {
+            KMeans = new Vector3D<float>[3] { new Vector3D<float>(0.7f, 0.2f, 0.5f), new Vector3D<float>(1f, 0.5f, 0.7f), new Vector3D<float>(0.5f, 0.7f, 0.2f) };
         }
 
         public unsafe void BindAndApplyShader()
@@ -192,7 +207,7 @@ namespace SharedProject.Implementation
 
     public class AvgEMGUVideo : EMGUVideo, IKMeansAble, IShaderAble
     {
-        public Vector3D<float>[] KMeans { get; set; } = new Vector3D<float>[3] { new Vector3D<float>(0.7f, 0.2f, 0.5f), new Vector3D<float>(1f, 0.5f, 0.7f), new Vector3D<float>(0.5f, 0.7f, 0.2f) };
+        public Vector3D<float>[] KMeans { get; set; }
         public SharedResProject.Shader Shader { get; set; }
         public virtual AvrRenderTarget RenderTarget { get; set; }
         public DrawBuffer DrawBuffer { get; set; } = default!;
@@ -200,6 +215,7 @@ namespace SharedProject.Implementation
 
         public AvgEMGUVideo(GL gl, string path, InternalFormat internalFormat, uint renderTargetSize) : base(gl, path, internalFormat, renderTargetSize)
         {
+            KMeans = new Vector3D<float>[3] { new Vector3D<float>(0.7f, 0.2f, 0.5f), new Vector3D<float>(1f, 0.5f, 0.7f), new Vector3D<float>(0.5f, 0.7f, 0.2f) };
         }
         public unsafe void BindAndApplyShader()
         {

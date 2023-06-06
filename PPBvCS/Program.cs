@@ -2,6 +2,7 @@
 using SharedProject.Base;
 using SharedProject.Implementation;
 using SharedProject.Interface;
+using SharedProject.Video;
 using SharedResProject;
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -34,7 +35,7 @@ namespace PPBvCS
             options.Title = "LearnOpenGL with Silk.NET";
             window = Silk.NET.Windowing.Window.Create(options);
 
-            window.IsVisible =false;
+            window.IsVisible = false;
             window.Initialize();
             OnLoad();
             OnClose();
@@ -44,7 +45,7 @@ namespace PPBvCS
         private static unsafe void OnLoad()
         {
             Gl = GL.GetApi(window);
-            Texture =  new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba8);
+            Texture = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba8);
             Texture1 = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16);
             Texture2 = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16f);
             Texture3 = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba32f);
@@ -73,6 +74,16 @@ namespace PPBvCS
             Console.WriteLine("texture avarage " + Texture3.AvgColor);
             Console.WriteLine("texture avarage " + Texture4.AvgColor);
 
+            VideoLoader videoLoader = new VideoLoader(ResourcesProvider.Video4K);
+            var time = DateTime.Now;
+            for (var i = 0; i <= 600; i++)
+            {
+                var ss = videoLoader.Load(out var bytes);
+                Console.WriteLine(bytes.Length.ToString());
+            }
+
+            Console.WriteLine("shader {0}", (time - DateTime.Now).TotalMilliseconds);
+            videoLoader.Dispose();
             Console.ReadLine();
             window.Close();
         }

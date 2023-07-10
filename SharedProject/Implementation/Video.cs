@@ -34,7 +34,7 @@ namespace SharedProject.Implementation
             Texture = CreateTexture(Gl, VideoData.Frames[FramePosition], internalFormat);
         }
 
-        internal unsafe virtual ITexture CreateTexture(GL gl, ImageFrame<Rgba32> img, InternalFormat internalFormat)
+        protected unsafe virtual ITexture CreateTexture(GL gl, ImageFrame<Rgba32> img, InternalFormat internalFormat)
         {
             return new Texture(gl, img, internalFormat);
         }
@@ -68,7 +68,7 @@ namespace SharedProject.Implementation
     public class EMGUVideo : BaseVideo
     {
         public VideoCapture VideoData { get; set; } = default!;
-        private string filePath { get; set; } = string.Empty;
+        protected string filePath { get; set; } = string.Empty;
 
         public EMGUVideo(GL gl, string path, InternalFormat internalFormat, uint renderTargetSize) : base(gl, path, internalFormat, renderTargetSize)
         {
@@ -82,12 +82,12 @@ namespace SharedProject.Implementation
         }
 
 
-        internal unsafe virtual ITexture CreateTexture(GL gl, void* data, uint width, uint height, InternalFormat internalFormat)
+        protected unsafe virtual ITexture CreateTexture(GL gl, void* data, uint width, uint height, InternalFormat internalFormat)
         {
             return new Texture(gl, data, width, height, internalFormat, Silk.NET.OpenGL.PixelFormat.Rgb);
         }
 
-        private unsafe void LoadFrame()
+        protected unsafe void LoadFrame()
         {
             //var time = DateTime.Now;
             using var mat = new Mat();
@@ -152,12 +152,12 @@ namespace SharedProject.Implementation
             LoadFrame();
         }
 
-        internal unsafe virtual ITexture CreateTexture(GL gl, void* data, uint width, uint height, InternalFormat internalFormat)
+        protected unsafe virtual ITexture CreateTexture(GL gl, void* data, uint width, uint height, InternalFormat internalFormat)
         {
             return new Texture(gl, data, width, height, internalFormat, Silk.NET.OpenGL.PixelFormat.Rgba);
         }
 
-        private unsafe void LoadFrame()
+        protected unsafe void LoadFrame()
         {
             //var time = DateTime.Now;
             if (VideoData.Load(out var bytes))
@@ -243,7 +243,7 @@ namespace SharedProject.Implementation
             }
         }
 
-        internal unsafe virtual AvrRenderTarget CreateRenderTarget(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat)
+        protected unsafe virtual AvrRenderTarget CreateRenderTarget(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat)
         {
             return new AvrRenderTarget(gl, Height, Width, Count, internalFormat);
         }
@@ -252,8 +252,9 @@ namespace SharedProject.Implementation
         {
             base.Init(path, internalFormat, renderTargetSize);
             DrawBuffer = new DrawBuffer(Gl);
+
             Shader = new SharedResProject.Shader(Gl, "centroidCal");
-            RenderTarget = CreateRenderTarget(Gl, Texture.Height, Texture.Width, renderTargetSize, internalFormat);
+            RenderTarget = CreateRenderTarget(Gl, Texture.Height, Texture.Width, renderTargetSize, InternalFormat.Rgba16f);
         }
         public override void Dispose()
         {
@@ -307,7 +308,7 @@ namespace SharedProject.Implementation
             }
         }
 
-        internal unsafe virtual AvrRenderTarget CreateRenderTarget(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat)
+        protected unsafe virtual AvrRenderTarget CreateRenderTarget(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat)
         {
             return new AvrRenderTarget(gl, Height, Width, Count, internalFormat);
         }
@@ -317,7 +318,8 @@ namespace SharedProject.Implementation
             base.Init(path, internalFormat, renderTargetSize);
             DrawBuffer = new DrawBuffer(Gl);
             Shader = new SharedResProject.Shader(Gl, "centroidCal");
-            RenderTarget = CreateRenderTarget(Gl, Texture.Height, Texture.Width, renderTargetSize, internalFormat);
+
+            RenderTarget = CreateRenderTarget(Gl, Texture.Height, Texture.Width, renderTargetSize, InternalFormat.Rgba16f);
         }
         public override void Dispose()
         {
@@ -372,7 +374,7 @@ namespace SharedProject.Implementation
             }
         }
 
-        internal unsafe virtual AvrRenderTarget CreateRenderTarget(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat)
+        protected unsafe virtual AvrRenderTarget CreateRenderTarget(GL gl, uint Height, uint Width, uint Count, InternalFormat internalFormat)
         {
             return new AvrRenderTarget(gl, Height, Width, Count, internalFormat);
         }
@@ -381,8 +383,10 @@ namespace SharedProject.Implementation
         {
             base.Init(path, internalFormat, renderTargetSize);
             DrawBuffer = new DrawBuffer(Gl);
+
             Shader = new SharedResProject.Shader(Gl, "centroidCal");
-            RenderTarget = CreateRenderTarget(Gl, Texture.Height, Texture.Width, renderTargetSize, internalFormat);
+
+            RenderTarget = CreateRenderTarget(Gl, Texture.Height, Texture.Width, renderTargetSize, InternalFormat.Rgba16f);
         }
         public override void Dispose()
         {

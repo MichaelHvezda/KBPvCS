@@ -35,7 +35,7 @@ class Program
 
 
     private static readonly float GreenH = 95 / 360f;
-    private static readonly float BlueH = 220 / 360f;
+    private static readonly float BlueH = 200 / 360f;
 
     private static void Main(string[] args)
     {

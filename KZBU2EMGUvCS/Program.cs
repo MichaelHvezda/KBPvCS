@@ -34,7 +34,7 @@ class Program
 
 
     private static readonly float GreenH = 95 / 360f;
-    private static readonly float BlueH = 220 / 360f;
+    private static readonly float BlueH = 200 / 360f;
 
     private static void Main(string[] args)
     {
@@ -65,7 +65,7 @@ class Program
         DrawBufferr = new(Gl);
         Shader = new(Gl, "kmean");
         Texture = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Back, InternalFormat.Rgba8);
-        Video = new Video(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba4, 3);
+        Video = new Video(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba8, 3);
 
         Console.WriteLine("res loaded");
         DateNow = DateTime.Now;

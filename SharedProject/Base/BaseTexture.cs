@@ -88,7 +88,7 @@ namespace SharedProject.Base
             this.Width = width;
             this.Height = height;
             this.PixelFormat = pixelFormat;
-            this.InternalFormat = InternalFormat;
+            this.InternalFormat = internalFormat;
             this.Gl.TexImage2D(TextureTarget.Texture2D, 0, (int)internalFormat, width, height, 0, pixelFormat, PixelType.UnsignedByte, data);
 
             action?.Invoke();
@@ -129,7 +129,7 @@ namespace SharedProject.Base
         {
             //In order to dispose we need to delete the opengl Handle for the texure.
             Gl.DeleteTexture(Handle);
-            base.Dispose();
+            //base.Dispose();
         }
 
         public void Bind()
@@ -144,8 +144,8 @@ namespace SharedProject.Base
             Gl.ActiveTexture(TextureUnit.Texture0);
             Gl.BindTexture(TextureTarget.Texture2D, 0);
         }
-        internal abstract void CalculateTotalMipmapLevels();
+        protected abstract void CalculateTotalMipmapLevels();
         public abstract void RecalculateAvrColor();
-        internal abstract void SetParameters();
+        protected abstract void SetParameters();
     }
 }

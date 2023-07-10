@@ -16,6 +16,8 @@ using Silk.NET.Windowing;
 using System.Xml;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using SharedProject.Implementation;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp;
 
 namespace KBPUsWFvCS;
 
@@ -29,7 +31,7 @@ static class Program
     private static SharedResProject.Shader Shader;
     private static DrawBuffer DrawBufferr;
     private static SharedProject.Implementation.Texture Texture;
-    private static SLVideo Video;
+    private static VLVideo Video;
     private static Form FormSetting;
     public static bool VideoStop { get; set; }
 
@@ -110,6 +112,22 @@ static class Program
 
         Gl.DrawElements(PrimitiveType.Triangles, (uint)DrawBuffer.Indices.Length, DrawElementsType.UnsignedInt, null);
 
+        if (Video.FramePosition == 100)
+        {
+            byte[] data = new byte[window.Size.X * window.Size.Y * 4];
+
+            fixed (byte* p = &data[0])
+            {
+                Gl.ReadPixels(0, 0, (uint)window.Size.X, (uint)window.Size.Y, Silk.NET.OpenGL.GLEnum.Rgba, Silk.NET.OpenGL.GLEnum.UnsignedByte, p);
+                //Gl.GetTexImage(TextureTarget.Texture2D, 0, Silk.NET.OpenGL.PixelFormat.Rgba, Silk.NET.OpenGL.PixelType.UnsignedByte, p);
+            }
+
+            var img = SixLabors.ImageSharp.Image.LoadPixelData<Rgba32>(data, (int)window.Size.X, (int)window.Size.Y);
+
+            img.SaveAsPngAsync("C:\\Users\\Hvìzdiè\\Desktop\\diplom\\wf.png");
+            img.Dispose();
+        }
+
         if (!VideoStop)
         {
             //for (var x = 0; x < 3; x++)
@@ -132,10 +150,11 @@ static class Program
         }
         if (Video.FramePosition == 0)
         {
-            var fps = 396 / (decimal)(DateTime.Now - DateNow).Seconds;
-            Console.WriteLine($"{fps} fps");
+            var fps = (double)396 / (double)((DateTime.Now - DateNow).TotalMilliseconds / 1000d);
+            Console.WriteLine("{0} fps {1} time", fps, (decimal)(DateTime.Now - DateNow).TotalMilliseconds);
             DateNow = DateTime.Now;
         }
+
         FormSetting.Refresh();
 
         //Console.WriteLine("render {0}", (time - DateTime.Now).TotalMilliseconds);
@@ -157,7 +176,7 @@ static class Program
         FormSetting?.Dispose();
     }
 
-    private static void KeyDown(IKeyboard arg1, Key arg2, int arg3)
+    private unsafe static void KeyDown(IKeyboard arg1, Key arg2, int arg3)
     {
         if (arg2 == Key.Escape)
         {
@@ -170,6 +189,22 @@ static class Program
         if (arg2 == Key.N)
         {
             Video.NextFrame();
+            Console.WriteLine(Video.FramePosition);
+        }
+        if (arg2 == Key.D)
+        {
+
+            byte[] data = new byte[window.Size.X * window.Size.Y * 4];
+
+            fixed (byte* p = &data[0])
+            {
+                Gl.ReadPixels(0, 0, (uint)window.Size.X, (uint)window.Size.Y, Silk.NET.OpenGL.GLEnum.Rgba, Silk.NET.OpenGL.GLEnum.UnsignedByte, p);
+                //Gl.GetTexImage(TextureTarget.Texture2D, 0, Silk.NET.OpenGL.PixelFormat.Rgba, Silk.NET.OpenGL.PixelType.UnsignedByte, p);
+            }
+
+            using var img = SixLabors.ImageSharp.Image.LoadPixelData<Rgba32>(data, (int)window.Size.X, (int)window.Size.Y);
+
+            img.SaveAsPngAsync($"C:\\Users\\Hvìzdiè\\Desktop\\diplom\\savedText{DateTimeOffset.UtcNow.Ticks}.png");
         }
     }
 }

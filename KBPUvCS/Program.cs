@@ -82,6 +82,7 @@ namespace KBPUvCS
             Shader.Use();
             //Bind a texture and and set the uTexture0 to use texture0.
 
+            Gl.Viewport(window.Size);
             Video.Texture.Bind(TextureUnit.Texture0);
             Shader.SetUniform("uTexture0", 0);
 
@@ -123,6 +124,23 @@ namespace KBPUvCS
                 Console.WriteLine("BG image ID " + Video.GetBGTextureId(BlueH));
 
             }
+
+            if (Video.FramePosition == 100)
+            {
+                byte[] data = new byte[window.Size.X * window.Size.Y * 4];
+
+                fixed (byte* p = &data[0])
+                {
+                    Gl.ReadPixels(0, 0, (uint)window.Size.X, (uint)window.Size.Y, Silk.NET.OpenGL.GLEnum.Rgba, Silk.NET.OpenGL.GLEnum.UnsignedByte, p);
+                    //Gl.GetTexImage(TextureTarget.Texture2D, 0, Silk.NET.OpenGL.PixelFormat.Rgba, Silk.NET.OpenGL.PixelType.UnsignedByte, p);
+                }
+
+                var img = Image.LoadPixelData<Rgba32>(data, (int)window.Size.X, (int)window.Size.Y);
+
+                img.SaveAsPngAsync("C:\\Users\\Hvězdič\\Desktop\\diplom\\csKBPUOmez.png");
+                img.Dispose();
+            }
+
             if (Video.FramePosition == 0)
             {
                 var fps = Video.FrameCount / (decimal)(DateTime.Now - DateNow).Seconds;

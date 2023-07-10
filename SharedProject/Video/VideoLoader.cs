@@ -32,7 +32,7 @@ namespace SharedProject.Video
             });
             Width = MediaFileData.Video.Info.FrameSize.Width;
             Height = MediaFileData.Video.Info.FrameSize.Height;
-            FrameCount = MediaFileData.Video.Info.FrameCount;
+            FrameCount = MediaFileData.Video.Info.NumberOfFrames ?? 0;
         }
 
         public void Dispose()

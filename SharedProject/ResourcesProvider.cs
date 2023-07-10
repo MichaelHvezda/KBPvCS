@@ -12,6 +12,8 @@ namespace SharedResProject
         public static string Video1 = Path.Combine(StaticPath, "video1.mp4");
         public static string Video2 = Path.Combine(StaticPath, "video2.mp4");
         public static string Video3 = Path.Combine(StaticPath, "video3.mp4");
+        public static string Video4 = Path.Combine(StaticPath, "video4.mp4");
+        public static string Video5 = Path.Combine(StaticPath, "video5.mp4");
         public static string Cat = Path.Combine(StaticPath, "cat.mp4");
         public static string Img = Path.Combine(StaticPath, "img.jpg");
         public static string Big = Path.Combine(StaticPath, "big.jpg");
@@ -21,6 +23,7 @@ namespace SharedResProject
         public static string Video_HD = Path.Combine(StaticHDPath, "video_HD.mp4");
         public static string Video4K = Path.Combine(StaticHDPath, "video4K.mp4");
         public static string VideoHD = Path.Combine(StaticHDPath, "videoHD.mp4");
+        public static string Text = Path.Combine(StaticHDPath, "text.png");
 
     }
 }

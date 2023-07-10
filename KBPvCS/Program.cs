@@ -25,7 +25,7 @@ namespace KBPvCS
         private static SharedResProject.Shader Shader;
         private static DrawBuffer DrawBufferr;
         private static ITexture Texture;
-        private static AvrSLVideo Video;
+        private static AvgVLVideo Video;
 
         public static int FramePosition { get; set; } = 0;
         public static int ImagePosition { get; set; } = 0;
@@ -59,7 +59,7 @@ namespace KBPvCS
             DrawBufferr = new(Gl);
             Shader = new(Gl, "kmean");
             Texture = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Back, InternalFormat.Rgba8);
-            Video = new SharedProject.Implementation.AvrSLVideo(Gl, ResourcesProvider.Video3, InternalFormat.Rgba8, 3);
+            Video = new (Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba8, 3);
 
             Console.WriteLine("res loaded");
             DateNow = DateTime.Now;
@@ -72,6 +72,7 @@ namespace KBPvCS
             Shader.Use();
             //Bind a texture and and set the uTexture0 to use texture0.
 
+            Gl.Viewport(window.Size);
             Video.Texture.Bind(TextureUnit.Texture0);
             Shader.SetUniform("uTexture0", 0);
 
@@ -96,6 +97,22 @@ namespace KBPvCS
             {
                 Console.WriteLine((DateNow - DateTime.Now).TotalMilliseconds);
                 DateNow = DateTime.Now;
+            }
+
+            if (Video.FramePosition == 100)
+            {
+                byte[] data = new byte[window.Size.X * window.Size.Y * 4];
+
+                fixed (byte* p = &data[0])
+                {
+                    Gl.ReadPixels(0, 0, (uint)window.Size.X, (uint)window.Size.Y, Silk.NET.OpenGL.GLEnum.Rgba, Silk.NET.OpenGL.GLEnum.UnsignedByte, p);
+                    //Gl.GetTexImage(TextureTarget.Texture2D, 0, Silk.NET.OpenGL.PixelFormat.Rgba, Silk.NET.OpenGL.PixelType.UnsignedByte, p);
+                }
+
+                var img = Image.LoadPixelData<Rgba32>(data, (int)window.Size.X, (int)window.Size.Y);
+
+                img.SaveAsPngAsync("C:\\Users\\Hvězdič\\Desktop\\diplom\\csKBPOmez.png");
+                img.Dispose();
             }
         }
 

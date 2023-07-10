@@ -32,12 +32,12 @@ namespace SharedProject.Implementation
             throw new NotImplementedException($"For this try {nameof(AvgTexture)} class");
         }
 
-        internal override void CalculateTotalMipmapLevels()
+        protected override void CalculateTotalMipmapLevels()
         {
             throw new NotImplementedException($"For this try {nameof(AvgTexture)} class");
         }
 
-        internal override void SetParameters()
+        protected override void SetParameters()
         {
             //Setting some texture perameters so the texture behaves as expected.
             Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)GLEnum.ClampToEdge);
@@ -64,7 +64,7 @@ namespace SharedProject.Implementation
         {
         }
 
-        internal override void SetParameters()
+        protected override void SetParameters()
         {
             //Setting some texture perameters so the texture behaves as expected.
             Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)GLEnum.ClampToEdge);
@@ -74,7 +74,7 @@ namespace SharedProject.Implementation
             Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Nearest);
         }
 
-        internal override void CalculateTotalMipmapLevels()
+        protected override void CalculateTotalMipmapLevels()
         {
             this.TotalMipmapLevels = (int)(1 + Math.Floor(Math.Log2(Math.Max(Width, Height))));
         }
@@ -86,10 +86,13 @@ namespace SharedProject.Implementation
             this.Width = width;
             this.Height = height;
             this.PixelFormat = pixelFormat;
-            this.InternalFormat = InternalFormat;
+            this.InternalFormat = internalFormat;
             this.CalculateTotalMipmapLevels();
             this.Gl.TexStorage2D(TextureTarget.Texture2D, (uint)TotalMipmapLevels, (GLEnum)internalFormat, width, height);
-            this.Gl.TexSubImage2D(TextureTarget.Texture2D, 0,0,0 , width, height, pixelFormat, PixelType.UnsignedByte, data);
+            if (data is not null)
+            {
+                this.Gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, width, height, pixelFormat, PixelType.UnsignedByte, data);
+            }
 
             action?.Invoke();
 

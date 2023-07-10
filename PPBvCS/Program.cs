@@ -1,4 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
+using PPBvCS.Kmeans;
 using SharedProject.Base;
 using SharedProject.Implementation;
 using SharedProject.Interface;
@@ -30,6 +33,19 @@ namespace PPBvCS
         private static ITexture Texture4;
         private static void Main(string[] args)
         {
+            //BenchmarkRunner.Run<TextureChange>();
+            //BenchmarkRunner.Run<TextureCreation>();
+            BenchmarkRunner.Run<VL>();
+            //BenchmarkRunner.Run<SL>();
+            //BenchmarkRunner.Run<EMGU>();
+            //BenchmarkRunner.Run<VideoPlayerBase>();
+            //BenchmarkRunner.Run<WF>();
+            //Init();
+
+        }
+
+        private static void Init()
+        {
             var options = WindowOptions.Default;
             options.Size = new Vector2D<int>(800, 600);
             options.Title = "LearnOpenGL with Silk.NET";
@@ -45,11 +61,11 @@ namespace PPBvCS
         private static unsafe void OnLoad()
         {
             Gl = GL.GetApi(window);
-            Texture = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba8);
-            Texture1 = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16);
-            Texture2 = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16f);
-            Texture3 = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba32f);
-            Texture4 = new SharedProject.Implementation.Texture(Gl, ResourcesProvider.Big, InternalFormat.Rgba4);
+            Texture = new SharedProject.Implementation.AvgTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba8);
+            Texture1 = new SharedProject.Implementation.AvgTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16);
+            Texture2 = new SharedProject.Implementation.AvgTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba16f);
+            Texture3 = new SharedProject.Implementation.AvgTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba32f);
+            Texture4 = new SharedProject.Implementation.AvgTexture(Gl, ResourcesProvider.Big, InternalFormat.Rgba4);
 
             using var image = Image.Load<Rgba32>(ResourcesProvider.Big);
 
@@ -66,13 +82,13 @@ namespace PPBvCS
             }
             var avarage = sum / (width * height);
 
-            Console.WriteLine("avarage         " + avarage);
-            Console.WriteLine("avarage         " + avarage / 255);
-            Console.WriteLine("texture avarage " + Texture.AvgColor);
-            Console.WriteLine("texture avarage " + Texture1.AvgColor);
-            Console.WriteLine("texture avarage " + Texture2.AvgColor);
-            Console.WriteLine("texture avarage " + Texture3.AvgColor);
-            Console.WriteLine("texture avarage " + Texture4.AvgColor);
+            Console.WriteLine($"avarage          {avarage:F4}");
+            Console.WriteLine($"avarage          {(avarage / 255f):  0.0000}");
+            Console.WriteLine($"texture avarage  {Texture4.AvgColor:  0.0000}");
+            Console.WriteLine($"texture avarage  {Texture.AvgColor:  0.0000}");
+            Console.WriteLine($"texture avarage  {Texture1.AvgColor:  0.0000}");
+            Console.WriteLine($"texture avarage  {Texture2.AvgColor:  0.0000}");
+            Console.WriteLine($"texture avarage  {Texture3.AvgColor:  0.0000}");
 
             VideoLoader videoLoader = new VideoLoader(ResourcesProvider.Video4K);
             var time = DateTime.Now;

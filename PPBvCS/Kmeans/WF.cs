@@ -86,7 +86,6 @@ namespace PPBvCS.Kmeans
             Texture?.Dispose();
             Video?.Dispose();
             Gl?.Dispose();
-            //RenderTarget.Dispose();
         }
     }
 }

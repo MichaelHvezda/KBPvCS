@@ -220,7 +220,6 @@ namespace PPBvCS
             Texture11?.Dispose();
             Texture12?.Dispose();
             Texture13?.Dispose();
-            //RenderTarget.Dispose();
         }
 
         [GlobalCleanup]
@@ -243,7 +242,6 @@ namespace PPBvCS
             Texture13?.Dispose();
             Gl?.Dispose();
             window?.Dispose();
-            //RenderTarget.Dispose();
         }
     }
 }

@@ -111,23 +111,7 @@ static class Program
 
         if (!VideoStop)
         {
-            //for (var x = 0; x < 3; x++)
-            //{
-            //    Console.Write("{");
-            //    for (var y = 0; y < 3; y++)
-            //    {
-            //        Console.Write(Video.KMeans[x, y] + " ");
-            //    }
-
-            //    Console.Write("}, ");
-            //}
-            //Console.WriteLine();
-
             Video.NextFrame();
-            //Video.BindAndApplyShader();
-            //Console.WriteLine(Video.FramePosition);
-            //Console.WriteLine("BG image ID " + Video.GetBGTextureId(BlueH));
-
         }
         if (Video.FramePosition == 0)
         {
@@ -136,8 +120,6 @@ static class Program
             DateNow = DateTime.Now;
         }
         FormSetting.Refresh();
-
-        //Console.WriteLine("render {0}", (time - DateTime.Now).TotalMilliseconds);
     }
 
     private static unsafe void OnResize(Vector2D<int> obj)

@@ -59,7 +59,6 @@ namespace PPBvCS.Kmeans
         [Benchmark]
         public unsafe void OnRender()
         {
-            //var time = DateTime.Now;
             Gl.Clear(ClearBufferMask.ColorBufferBit);
 
             DrawBufferr.Bind();
@@ -74,8 +73,6 @@ namespace PPBvCS.Kmeans
             Texture.Bind(TextureUnit.Texture1);
             Shader.SetUniform("uTexture1", 1);
 
-            //Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
-            //Shader.SetUniform("uTexture2", 2);
             Video.RenderTarget.ColorBuffers[Video.GetBGTextureId(BlueH)].Bind(TextureUnit.Texture2);
             Shader.SetUniform("uTexture2", 2);
 
@@ -95,7 +92,6 @@ namespace PPBvCS.Kmeans
             Texture?.Dispose();
             Video?.Dispose();
             Gl?.Dispose();
-            //RenderTarget.Dispose();
         }
     }
 }

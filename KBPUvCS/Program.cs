@@ -68,7 +68,6 @@ namespace KBPUvCS
             BaseShader = new(Gl, "shader");
             Texture = new(Gl, ResourcesProvider.Back, InternalFormat.Rgba16f);
             Video = new(Gl, ResourcesProvider.Video3, InternalFormat.Rgba16f,3);
-            //Video.KMeans = new float[3, 3] { { 50.28f/360.0f, 19.13f/100.0f, 49.56f / 100.0f }, { 200.46f / 360.0f, 87.40f / 100.0f, 71.90f / 100.0f }, { 192.81f / 360.0f, 24.81f / 100.0f, 26.75f / 100.0f } };
 
             Console.WriteLine("res loaded");
             DateNow = DateTime.Now;
@@ -89,38 +88,15 @@ namespace KBPUvCS
             Texture.Bind(TextureUnit.Texture1);
             Shader.SetUniform("uTexture1", 1);
 
-            //Video.RenderTarget.ColorBuffers[ImagePosition].Bind(TextureUnit.Texture2);
             Video.RenderTarget.ColorBuffers[Video.GetBGTextureId(BlueH)].Bind(TextureUnit.Texture2);
             Shader.SetUniform("uTexture2", 2);
-
-            //BaseShader.Use();
-            //Video.RenderTarget.ColorBuffers[Video.GetBGTextureId(GreenH)].Bind(TextureUnit.Texture0);
-            //Shader.SetUniform("uTexture0", 0);
 
             Gl.DrawElements(PrimitiveType.Triangles, (uint)DrawBuffer.Indices.Length, DrawElementsType.UnsignedInt, null);
 
             if (!VideoStop)
             {
-                //for (var x = 0; x < 3; x++)
-                //{
-                //    Console.Write("{");
-                //    for (var y = 0; y < 3; y++)
-                //    {
-                //        if (y == 0)
-                //        {
-                //            Console.Write(Video.KMeans[x, y] * 360.0f + " ");
-                //            continue;
-                //        }
-                //        Console.Write(Video.KMeans[x, y] * 100.0f + " ");
-                //    }
-
-                //    Console.Write("}, ");
-                //}
-                //Console.WriteLine();
-
                 Video.NextFrame();
                 Video.BindAndApplyShader();
-                //Console.WriteLine(Video.FramePosition);
                 Console.WriteLine("BG image ID " + Video.GetBGTextureId(BlueH));
 
             }
@@ -132,7 +108,6 @@ namespace KBPUvCS
                 fixed (byte* p = &data[0])
                 {
                     Gl.ReadPixels(0, 0, (uint)window.Size.X, (uint)window.Size.Y, Silk.NET.OpenGL.GLEnum.Rgba, Silk.NET.OpenGL.GLEnum.UnsignedByte, p);
-                    //Gl.GetTexImage(TextureTarget.Texture2D, 0, Silk.NET.OpenGL.PixelFormat.Rgba, Silk.NET.OpenGL.PixelType.UnsignedByte, p);
                 }
 
                 var img = Image.LoadPixelData<Rgba32>(data, (int)window.Size.X, (int)window.Size.Y);

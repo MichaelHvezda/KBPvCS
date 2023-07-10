@@ -89,7 +89,6 @@ namespace PPBvCS.Kmeans
             SLVideoBase?.Dispose();
             EMGUVideoBase?.Dispose();
             VLVideoBase?.Dispose();
-            //RenderTarget.Dispose();
         }
 
         [GlobalCleanup]
@@ -100,7 +99,6 @@ namespace PPBvCS.Kmeans
             EMGUVideo?.Dispose();
             VLVideo?.Dispose();
             Gl?.Dispose();
-            //RenderTarget.Dispose();
         }
     }
 }

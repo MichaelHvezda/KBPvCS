@@ -109,7 +109,6 @@ namespace PPBvCS
             //Remember to dispose all the instances.
             Gl?.Dispose();
             Texture?.Dispose();
-            //RenderTarget.Dispose();
         }
     }
 }

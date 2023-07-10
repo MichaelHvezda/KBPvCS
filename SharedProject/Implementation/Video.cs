@@ -89,23 +89,17 @@ namespace SharedProject.Implementation
 
         protected unsafe void LoadFrame()
         {
-            //var time = DateTime.Now;
             using var mat = new Mat();
             if (VideoData.Read(mat))
             {
-
-                //Console.WriteLine((long)VideoData.Ptr);
                 if (Texture is null)
                 {
-                    //Console.WriteLine("texture cscd {0}", (time - DateTime.Now).TotalMilliseconds);
                     Texture = CreateTexture(Gl, mat.DataPointer.ToPointer(), (uint)mat.Width, (uint)mat.Height, InternalFormat);
                     return;
                 }
 
-                //Console.WriteLine("texture readed {0}", (time - DateTime.Now).TotalMilliseconds);
 
                 Texture.ChangeContent(mat.DataPointer.ToPointer());
-                //Console.WriteLine("texture creationdada {0}", (time - DateTime.Now).TotalMilliseconds);
                 return;
             }
             FramePosition = 0;
@@ -113,18 +107,6 @@ namespace SharedProject.Implementation
             {
                 Texture.ChangeContent(mat.DataPointer.ToPointer());
             }
-
-
-
-            //var time = DateTime.Now;
-            //VideoData.Dispose();
-            //Console.WriteLine("dispose {0}", (time - DateTime.Now).TotalMilliseconds);
-            //VideoData = new VideoCapture(filePath);
-            //Console.WriteLine("create {0}", (time - DateTime.Now).TotalMilliseconds);
-
-            //VideoData.Stop();
-
-            //Console.WriteLine("texture creation {0}", (time - DateTime.Now).TotalMilliseconds);
         }
 
 
@@ -159,23 +141,18 @@ namespace SharedProject.Implementation
 
         protected unsafe void LoadFrame()
         {
-            //var time = DateTime.Now;
             if (VideoData.Load(out var bytes))
             {
-
-                //Console.WriteLine((long)VideoData.Ptr);
                 if (Texture is null)
                 {
-                    //Console.WriteLine("texture cscd {0}", (time - DateTime.Now).TotalMilliseconds);
                     fixed (void* d = &bytes[0])
                         Texture = CreateTexture(Gl, d, (uint)VideoData.Width, (uint)VideoData.Height, InternalFormat);
                     return;
                 }
 
-                //Console.WriteLine("texture readed {0}", (time - DateTime.Now).TotalMilliseconds);
                 fixed (void* d = &bytes[0])
                     Texture.ChangeContent(d);
-                //Console.WriteLine("texture creationdada {0}", (time - DateTime.Now).TotalMilliseconds);
+
                 return;
             }
             FramePosition = 0;

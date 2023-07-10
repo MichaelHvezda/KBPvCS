@@ -38,8 +38,6 @@ namespace SharedProject.Implementation
             for (int i = 0; i < Count; i++)
             {
                 this.ColorBuffers[i].RecalculateAvrColor();
-                //gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.Nearest);
-                //gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Nearest);
                 var large = this.ColorBuffers[i].Width * this.ColorBuffers[i].Height;
                 var sumVec = this.ColorBuffers[i].AvgColor * (int)large;
 

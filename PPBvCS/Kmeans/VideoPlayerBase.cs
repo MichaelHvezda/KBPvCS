@@ -39,8 +39,6 @@ namespace PPBvCS.Kmeans
 
             Gl = GL.GetApi(window);
 
-            //SLVideoBase = new(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba8, 3);
-            //EMGUVideoBase = new(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba8, 3);
             VLVideoBase = new(Gl, ResourcesProvider.Video_4K, InternalFormat.Rgba8, 3);
         }
 
@@ -77,7 +75,6 @@ namespace PPBvCS.Kmeans
             EMGUVideoBase?.Dispose();
             VLVideoBase?.Dispose();
             Gl?.Dispose();
-            //RenderTarget.Dispose();
         }
     }
 }

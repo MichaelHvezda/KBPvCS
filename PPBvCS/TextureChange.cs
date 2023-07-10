@@ -21,8 +21,6 @@ namespace PPBvCS
     [MemoryDiagnoser]
     [Orderer(BenchmarkDotNet.Order.SummaryOrderPolicy.FastestToSlowest)]
     [RankColumn]
-    //[MinIterationCount(50)]
-    //[MaxIterationCount(55)]
     [MinIterationCount(100)]
     [MaxIterationCount(125)]
     [AllStatisticsColumn]
@@ -129,91 +127,91 @@ namespace PPBvCS
             }
         }
 
-        //[Benchmark]
-        //public unsafe void Rgba16fBgr()
-        //{
-        //    for (int i = 0; i < NumberOfIter; i++)
-        //    {
-        //        fixed (void* d = &ImageBytes[0])
-        //            Texture8.ChangeContent(d);
-        //    }
-        //}
+        [Benchmark]
+        public unsafe void Rgba16fBgr()
+        {
+            for (int i = 0; i < NumberOfIter; i++)
+            {
+                fixed (void* d = &ImageBytes[0])
+                    Texture8.ChangeContent(d);
+            }
+        }
 
-        //[Benchmark]
-        //public unsafe void Rgba16fRgb()
-        //{
-        //    for (int i = 0; i < NumberOfIter; i++)
-        //    {
-        //        fixed (void* d = &ImageBytes[0])
-        //            Texture12.ChangeContent(d);
-        //    }
-        //}
-        //[Benchmark]
-        //public unsafe void Rgba16fBgra()
-        //{
-        //    for (int i = 0; i < NumberOfIter; i++)
-        //    {
-        //        fixed (void* d = &ImageBytes[0])
-        //            Texture9.ChangeContent(d);
-        //    }
-        //}
-        //[Benchmark]
-        //public unsafe void Rgba8Bgr()
-        //{
-        //    for (int i = 0; i < NumberOfIter; i++)
-        //    {
-        //        fixed (void* d = &ImageBytes[0])
-        //            Texture10.ChangeContent(d);
-        //    }
-        //}
+        [Benchmark]
+        public unsafe void Rgba16fRgb()
+        {
+            for (int i = 0; i < NumberOfIter; i++)
+            {
+                fixed (void* d = &ImageBytes[0])
+                    Texture12.ChangeContent(d);
+            }
+        }
+        [Benchmark]
+        public unsafe void Rgba16fBgra()
+        {
+            for (int i = 0; i < NumberOfIter; i++)
+            {
+                fixed (void* d = &ImageBytes[0])
+                    Texture9.ChangeContent(d);
+            }
+        }
+        [Benchmark]
+        public unsafe void Rgba8Bgr()
+        {
+            for (int i = 0; i < NumberOfIter; i++)
+            {
+                fixed (void* d = &ImageBytes[0])
+                    Texture10.ChangeContent(d);
+            }
+        }
 
-        //[Benchmark]
-        //public unsafe void Rgba8Rgb()
-        //{
-        //    for (int i = 0; i < NumberOfIter; i++)
-        //    {
-        //        fixed (void* d = &ImageBytes[0])
-        //            Texture13.ChangeContent(d);
-        //    }
-        //}
+        [Benchmark]
+        public unsafe void Rgba8Rgb()
+        {
+            for (int i = 0; i < NumberOfIter; i++)
+            {
+                fixed (void* d = &ImageBytes[0])
+                    Texture13.ChangeContent(d);
+            }
+        }
 
-        //[Benchmark]
-        //public unsafe void Rgba8Bgra()
-        //{
-        //    for (int i = 0; i < NumberOfIter; i++)
-        //    {
-        //        fixed (void* d = &ImageBytes[0])
-        //            Texture11.ChangeContent(d);
-        //    }
-        //}
-        //[Benchmark]
-        //public unsafe void Rgba16()
-        //{
-        //    for (int i = 0; i < NumberOfIter; i++)
-        //    {
-        //        fixed (void* d = &ImageBytes[0])
-        //            Texture1.ChangeContent(d);
-        //    }
-        //}
+        [Benchmark]
+        public unsafe void Rgba8Bgra()
+        {
+            for (int i = 0; i < NumberOfIter; i++)
+            {
+                fixed (void* d = &ImageBytes[0])
+                    Texture11.ChangeContent(d);
+            }
+        }
+        [Benchmark]
+        public unsafe void Rgba16()
+        {
+            for (int i = 0; i < NumberOfIter; i++)
+            {
+                fixed (void* d = &ImageBytes[0])
+                    Texture1.ChangeContent(d);
+            }
+        }
 
-        //[Benchmark]
-        //public unsafe void Rgba32f()
-        //{
-        //    for (int i = 0; i < NumberOfIter; i++)
-        //    {
-        //        fixed (void* d = &ImageBytes[0])
-        //            Texture3.ChangeContent(d);
-        //    }
-        //}
-        //[Benchmark(Baseline = true)]
-        //public unsafe void Rgba16fPointer()
-        //{
-        //    for (int i = 0; i < NumberOfIter; i++)
-        //    {
-        //        fixed (void* d = &ImageBytes[0])
-        //            Texture5.ChangeContent(d);
-        //    }
-        //}
+        [Benchmark]
+        public unsafe void Rgba32f()
+        {
+            for (int i = 0; i < NumberOfIter; i++)
+            {
+                fixed (void* d = &ImageBytes[0])
+                    Texture3.ChangeContent(d);
+            }
+        }
+        [Benchmark(Baseline = true)]
+        public unsafe void Rgba16fPointer()
+        {
+            for (int i = 0; i < NumberOfIter; i++)
+            {
+                fixed (void* d = &ImageBytes[0])
+                    Texture5.ChangeContent(d);
+            }
+        }
 
         [GlobalCleanup]
         public void Dispose()
@@ -232,7 +230,6 @@ namespace PPBvCS
             Texture11?.Dispose();
             Gl?.Dispose();
             window?.Dispose();
-            //RenderTarget.Dispose();
         }
     }
 }

@@ -88,7 +88,6 @@ static class Program
     }
     private static unsafe void OnRender(double obj)
     {
-        //var time = DateTime.Now;
         Gl.Clear(ClearBufferMask.ColorBufferBit);
 
         DrawBufferr.Bind();
@@ -119,7 +118,6 @@ static class Program
             fixed (byte* p = &data[0])
             {
                 Gl.ReadPixels(0, 0, (uint)window.Size.X, (uint)window.Size.Y, Silk.NET.OpenGL.GLEnum.Rgba, Silk.NET.OpenGL.GLEnum.UnsignedByte, p);
-                //Gl.GetTexImage(TextureTarget.Texture2D, 0, Silk.NET.OpenGL.PixelFormat.Rgba, Silk.NET.OpenGL.PixelType.UnsignedByte, p);
             }
 
             var img = SixLabors.ImageSharp.Image.LoadPixelData<Rgba32>(data, (int)window.Size.X, (int)window.Size.Y);
@@ -130,22 +128,7 @@ static class Program
 
         if (!VideoStop)
         {
-            //for (var x = 0; x < 3; x++)
-            //{
-            //    Console.Write("{");
-            //    for (var y = 0; y < 3; y++)
-            //    {
-            //        Console.Write(Video.KMeans[x, y] + " ");
-            //    }
-
-            //    Console.Write("}, ");
-            //}
-            //Console.WriteLine();
-
             Video.NextFrame();
-            //Video.BindAndApplyShader();
-            //Console.WriteLine(Video.FramePosition);
-            //Console.WriteLine("BG image ID " + Video.GetBGTextureId(BlueH));
 
         }
         if (Video.FramePosition == 0)
@@ -157,7 +140,6 @@ static class Program
 
         FormSetting.Refresh();
 
-        //Console.WriteLine("render {0}", (time - DateTime.Now).TotalMilliseconds);
     }
 
     private static unsafe void OnResize(Vector2D<int> obj)
@@ -199,7 +181,6 @@ static class Program
             fixed (byte* p = &data[0])
             {
                 Gl.ReadPixels(0, 0, (uint)window.Size.X, (uint)window.Size.Y, Silk.NET.OpenGL.GLEnum.Rgba, Silk.NET.OpenGL.GLEnum.UnsignedByte, p);
-                //Gl.GetTexImage(TextureTarget.Texture2D, 0, Silk.NET.OpenGL.PixelFormat.Rgba, Silk.NET.OpenGL.PixelType.UnsignedByte, p);
             }
 
             using var img = SixLabors.ImageSharp.Image.LoadPixelData<Rgba32>(data, (int)window.Size.X, (int)window.Size.Y);

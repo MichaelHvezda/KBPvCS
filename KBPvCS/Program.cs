@@ -84,15 +84,9 @@ namespace KBPvCS
 
             Gl.DrawElements(PrimitiveType.Triangles, (uint)DrawBuffer.Indices.Length, DrawElementsType.UnsignedInt, null);
 
-            //foreach (var i in Video.KMeans)
-            //{
-            //  Console.Write(i + " ");
-            //}
-            //Console.WriteLine();
-
             Video.NextFrame();
             Video.BindAndApplyShader();
-            //Console.WriteLine(Video.FramePosition);
+
             if (Video.FramePosition == 0)
             {
                 Console.WriteLine((DateNow - DateTime.Now).TotalMilliseconds);
@@ -106,7 +100,6 @@ namespace KBPvCS
                 fixed (byte* p = &data[0])
                 {
                     Gl.ReadPixels(0, 0, (uint)window.Size.X, (uint)window.Size.Y, Silk.NET.OpenGL.GLEnum.Rgba, Silk.NET.OpenGL.GLEnum.UnsignedByte, p);
-                    //Gl.GetTexImage(TextureTarget.Texture2D, 0, Silk.NET.OpenGL.PixelFormat.Rgba, Silk.NET.OpenGL.PixelType.UnsignedByte, p);
                 }
 
                 var img = Image.LoadPixelData<Rgba32>(data, (int)window.Size.X, (int)window.Size.Y);
@@ -129,7 +122,6 @@ namespace KBPvCS
             Texture?.Dispose();
             Video?.Dispose();
             Gl?.Dispose();
-            //RenderTarget.Dispose();
         }
 
         private static void KeyDown(IKeyboard arg1, Key arg2, int arg3)

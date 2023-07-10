@@ -80,7 +80,6 @@ namespace PPBvCS.Kmeans
             EMGUVideo?.Dispose();
             VLVideo?.Dispose();
             Gl?.Dispose();
-            //RenderTarget.Dispose();
         }
     }
 }
